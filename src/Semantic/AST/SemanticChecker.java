@@ -1,32 +1,7 @@
 package Semantic.AST;
 
-import Semantic.AST.Node.AddrNode;
-import Semantic.AST.Node.AssignNode;
-import Semantic.AST.Node.BinaryNode;
-import Semantic.AST.Node.BlockNode;
-import Semantic.AST.Node.BreakNode;
-import Semantic.AST.Node.CallNode;
-import Semantic.AST.Node.ClassNode;
-import Semantic.AST.Node.ContinueNode;
-import Semantic.AST.Node.ExprNode;
-import Semantic.AST.Node.ExprinNode;
-import Semantic.AST.Node.ForNode;
-import Semantic.AST.Node.FuncNode;
-import Semantic.AST.Node.IfStNode;
-import Semantic.AST.Node.ObjNode;
-import Semantic.AST.Node.PrefixNode;
-import Semantic.AST.Node.PrimaryNode;
-import Semantic.AST.Node.ReturnNode;
-import Semantic.AST.Node.RootNode;
-import Semantic.AST.Node.StNode;
-import Semantic.AST.Node.SuffixNode;
-import Semantic.AST.Node.VarDefNode;
-import Semantic.AST.Node.VarNode;
-import Semantic.AST.Node.WhileNode;
-import Semantic.AST.Node.position;
-import Semantic.AST.Utils.Scope;
-import Semantic.AST.Utils.globalScope;
-import Semantic.AST.Utils.semanticError;
+import Semantic.AST.Node.*;
+import Semantic.AST.Utils.*;
 
 public class SemanticChecker 
 {
