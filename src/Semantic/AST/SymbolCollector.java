@@ -4,6 +4,7 @@ import Semantic.AST.Node.ClassNode;
 import Semantic.AST.Node.FuncNode;
 import Semantic.AST.Node.RootNode;
 import Semantic.AST.Node.position;
+import Semantic.AST.Utils.*;
 
 public class SymbolCollector 
 {

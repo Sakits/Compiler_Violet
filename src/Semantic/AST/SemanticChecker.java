@@ -24,6 +24,9 @@ import Semantic.AST.Node.VarDefNode;
 import Semantic.AST.Node.VarNode;
 import Semantic.AST.Node.WhileNode;
 import Semantic.AST.Node.position;
+import Semantic.AST.Utils.Scope;
+import Semantic.AST.Utils.globalScope;
+import Semantic.AST.Utils.semanticError;
 
 public class SemanticChecker 
 {

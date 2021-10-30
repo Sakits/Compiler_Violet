@@ -1,4 +1,4 @@
-package Semantic.AST;
+package Semantic.AST.Utils;
 
 import Semantic.AST.Node.position;
 
