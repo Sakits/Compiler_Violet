@@ -10,65 +10,64 @@ classDef :
     ;
 
 functionDef : returnType Identifier '(' functionVarDef ')' suite;
-functionVarDef : (varDef (',' varDef)*)?;
+functionVarDef : (funcVarDef (',' funcVarDef)*)?;
 lambdaFunc : '[' '&' ']' ('(' functionVarDef ')')? '->' suite '(' expression? ')';
 constructFuncDef : Identifier '(' functionVarDef ')' suite;
 
 suite : '{' statement* '}';
 
 statement
-    : suite                                                         # block
-    | ifStat                                                        # if
-    | Return (expression | newVar)? ';'                             # return
-    | loopStat                                                      # loop
-    | Break ';'                                                     # break
-    | Continue ';'                                                  # continue
-    | varDef ';'                                                    # var
-    | newVar ';'                                                    # nvar
-    | expression ';'                                                # expr
-    | ';'                                                           # semi
+    : suite                                                         # blockTag
+    | ifStat                                                        # ifTag
+    | Return expression ';'                                         # returnTag
+    | whileStat                                                     # whileTag
+    | forStat                                                       # forTag
+    | Break ';'                                                     # breakTag
+    | Continue ';'                                                  # continueTag
+    | varDef ';'                                                    # varTag
+    | expression ';'                                                # exprTag
+    | lambdaFunc                                                    # lambdaTag
+    | ';'                                                           # semiTag
     ; 
 
+funcVarDef : varType oneVarDef;
 varDef : varType oneVarDef (',' oneVarDef)* ;
-newVar : New newType ('(' expression? ')')?;
-oneVarDef : Identifier ('=' (newVar | expression) )?;
+oneVarDef : Identifier ('=' expression )?;
 
 expression
-    : primary
-    | '(' expression ')'
-    | '(' newVar ')'
-    | expression '[' expression ']'
-    | expression '(' (expression (',' expression)*)? ')'
-    | expression '.' Identifier ('(' expression? ')')?
-    | '!' expression
-    | ('++' | '--') expression 
-    | '-' expression
-    | '+' expression
-    | expression ('++' | '--')
-    | expression ('*' | '/' | '%') expression
-    | expression ('+' | '-') expression
-    | expression ('<<' | '>>') expression
-    | expression ('<' | '<=' | '>' | '>=') expression
-    | expression ('==' | '!=') expression
-    | expression '&' expression
-    | expression '^' expression
-    | expression '|' expression
-    | expression '&&' expression
-    | expression '||' expression
-    | expression '=' newVar
-    | <assoc=right> expression '=' expression
+    : primary                                                       # primaryTag
+    | '(' expression ')'                                            # exprinTag
+    | New newType ('(' expression? ')')?                            # nvarTag
+    | expression '[' expression ']'                                 # addrTag
+    | expression '(' (expression (',' expression)*)? ')'            # callTag
+    | expression '.' Identifier (bra = '(' expression? ')')?        # objTag
+    | op = '!' expression                                           # prefixTag
+    | op = ('++' | '--') expression                                 # prefixTag
+    | op = '-' expression                                           # prefixTag
+    | op = '+' expression                                           # prefixTag
+    | expression op = ('++' | '--')                                 # suffixTag
+    | expression op = ('*' | '/' | '%') expression                  # binaryTag
+    | expression op = ('+' | '-') expression                        # binaryTag
+    | expression op = ('<<' | '>>') expression                      # binaryTag
+    | expression op = ('<' | '<=' | '>' | '>=') expression          # binaryTag
+    | expression op = ('==' | '!=') expression                      # binaryTag
+    | expression op = '&' expression                                # binaryTag
+    | expression op = '^' expression                                # binaryTag
+    | expression op = '|' expression                                # binaryTag
+    | expression op = '&&' expression                               # binaryTag
+    | expression op = '||' expression                               # binaryTag
+    | <assoc=right> expression '=' expression                       # assignTag
     ;
 
 ifStat :
     If '(' expression ')' 
-        statement
+        trueSt = statement
     (Else
-        statement)?
+        falseSt = statement)?
     ;
 
-loopStat : whileStat | forState;
 whileStat : While '(' expression ')' statement;
-forState : For '(' (varDef | expression)? ';' expression? ';' expression? ')' statement;
+forStat : For '(' (varDef | init = expression)? ';' cond = expression? ';' next = expression? ')' statement;
 
 returnType : Void | varType;
 varType : basicType ('[' ']')*;
