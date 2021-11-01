@@ -25,7 +25,8 @@ public class ASTVisitor
     public void visit(ReturnNode now) {}
     public void visit(RootNode now) {}
     public void visit(SemiExprNode now) {}
-    public void visit(StNode now) {}
     public void visit(SuffixExprNode now) {}
+    public void visit(SuiteNode now) {}
     public void visit(VarDefNode now) {}
+    public void visit(WhileStNode now) {}
 }

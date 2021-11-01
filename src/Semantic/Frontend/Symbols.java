@@ -8,11 +8,21 @@ import Semantic.AST.Node.FuncDefNode;
 public class Symbols 
 {
     public HashMap<String, FuncDefNode> funcs = new HashMap<>();
-    public HashMap<String, ClassDefNode> classes = new HashMap<>();
+    public HashMap<String, ClassDefNode> types = new HashMap<>();
 
     public boolean is_used(String idt)
     {
-        return funcs.containsKey(idt) || classes.containsKey(idt);
+        return funcs.containsKey(idt) || types.containsKey(idt);
+    }
+
+    public boolean func_is_used(String idt)
+    {
+        return funcs.containsKey(idt);
+    }
+
+    public boolean type_is_used(String idt)
+    {
+        return types.containsKey(idt);
     }
 
     public void add_func(String idt, FuncDefNode func)
@@ -25,13 +35,13 @@ public class Symbols
         return funcs.containsKey(idt) ? funcs.get(idt) : null;
     }
 
-    public void add_class(String idt, ClassDefNode cls)
+    public void add_type(String idt, ClassDefNode cls)
     {
-        classes.put(idt, cls);
+        types.put(idt, cls);
     }
 
-    public ClassDefNode get_class(String idt)
+    public ClassDefNode get_type(String idt)
     {
-        return classes.containsKey(idt) ? classes.get(idt) : null;
+        return types.containsKey(idt) ? types.get(idt) : null;
     }
 }

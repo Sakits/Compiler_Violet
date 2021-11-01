@@ -5,8 +5,6 @@ import Utils.position;
 
 public class NvarExprNode extends ExprNode
 {
-    public String type;
-    public int dim;
 
     public NvarExprNode(position pos, String type, int dim)
     {

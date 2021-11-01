@@ -57,7 +57,20 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode>
         ClassDefNode now = new ClassDefNode(new position(ctx), ctx.Identifier().getText());
 
         if (ctx.constructFuncDef() != null)
-            ctx.constructFuncDef().forEach(i -> now.func.add((FuncDefNode) visit(i)));
+        {
+            for (var i : ctx.constructFuncDef())
+            {
+                FuncDefNode func = (FuncDefNode) visit(i);
+                func.return_type = ctx.Identifier().getText();
+                now.func.add(func);
+            }
+        }
+        else
+        {
+            SuiteNode st = new SuiteNode(new position(ctx));
+            FuncDefNode func = new FuncDefNode(new position(ctx), 0, ctx.Identifier().getText(), ctx.Identifier().getText(), st);
+            now.func.add(func);
+        }
         if (ctx.functionDef() != null)
             ctx.functionDef().forEach(i -> now.func.add((FuncDefNode) visit(i)));
         if (ctx.varDef() != null)
