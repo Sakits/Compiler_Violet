@@ -10,7 +10,7 @@ public class SemanticChecker extends ASTVisitor
     public Scope now_scope;
     public ClassDefNode now_class = null;
     public FuncDefNode now_func = null;
-    boolean is_in_loop = false;
+    public int is_in_loop = 0;
 
     public SemanticChecker(Symbols symbols)
     {
@@ -79,7 +79,7 @@ public class SemanticChecker extends ASTVisitor
         if (now.expr != null)
         {
             now.expr.accept(this);
-            if (!now.expr.type.equals(now_func.return_type))
+            if (!now.expr.type.equals("null") && !now.expr.type.equals(now_func.return_type))
                 throw new SemanticError(now.pos, "return type not match");
             if (now.expr.dim != now_func.dim)
                 throw new SemanticError(now.pos, "return dimension not match");
@@ -145,6 +145,8 @@ public class SemanticChecker extends ASTVisitor
         now.ptr.accept(this);
         if (now.ptr.is_class != null || now.ptr.is_func != null)
             throw new SemanticError(now.ptr.pos, "func or class can't use []");
+        if (now.ptr.tobe_left_val)
+            throw new SemanticError(now.ptr.pos, "new can't use []");
         if (now.ptr.dim == 0)
             throw new SemanticError(now.ptr.pos, "ptr have no dimension");
 
@@ -421,13 +423,13 @@ public class SemanticChecker extends ASTVisitor
 
     public void visit(BreakStNode now)
     {
-        if (!is_in_loop)
+        if (is_in_loop == 0)
             throw new SemanticError(now.pos, "break outside the loop");
     }
 
     public void visit(ContinueStNode now)
     {
-        if (!is_in_loop)
+        if (is_in_loop == 0)
             throw new SemanticError(now.pos, "continue outside the loop");
     }
 
@@ -439,7 +441,7 @@ public class SemanticChecker extends ASTVisitor
     public void visit(ForStNode now)
     {
         now_scope = new Scope(now_scope);
-        is_in_loop = true;
+        is_in_loop ++;
 
         if (now.var != null)
             now.var.accept(this);   
@@ -456,19 +458,19 @@ public class SemanticChecker extends ASTVisitor
 
         now.st.accept(this);
 
-        is_in_loop = false;
+        is_in_loop --;
         now_scope = now_scope.fa_scope;
     }
 
     public void visit(WhileStNode now)
     {
         now_scope = new Scope(now_scope);
-        is_in_loop = true;
+        is_in_loop ++;
 
         now.cond.accept(this);
         now.st.accept(this);
 
-        is_in_loop = false;
+        is_in_loop --;
         now_scope = now_scope.fa_scope;
     }
 
