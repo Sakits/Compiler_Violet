@@ -1,19 +1,19 @@
 package Semantic.AST.Node;
 
-import java.util.ArrayList;
 import Semantic.AST.SemanticChecker;
 
-public class VarDefNode extends StNode
+public class FuncVarDefNode extends ASTNode
 {
     public String type;
     public int dim;
-    public ArrayList<OneVarDefNode> var = new ArrayList<>();
+    public OneVarDefNode one_var;
 
-    public VarDefNode(position pos, String type, int dim)
+    public FuncVarDefNode(position pos, String type, int dim, OneVarDefNode one_var)
     {
         super(pos);
         this.type = type;
         this.dim = dim;
+        this.one_var = one_var;
     }
 
     public void accept(SemanticChecker sc)

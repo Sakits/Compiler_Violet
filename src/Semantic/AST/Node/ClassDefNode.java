@@ -1,17 +1,19 @@
 package Semantic.AST.Node;
 
 import java.util.ArrayList;
+
 import Semantic.AST.SemanticChecker;
 
-public class RootNode extends ASTNode
+public class ClassDefNode extends ASTNode
 {
+    public String idt;
     public ArrayList<FuncDefNode> func = new ArrayList<>();
     public ArrayList<VarDefNode> var = new ArrayList<>();
-    public ArrayList<ClassDefNode> cls = new ArrayList<>();
 
-    public RootNode(position pos)
+    public ClassDefNode(position pos, String idt)
     {
         super(pos);
+        this.idt = idt;
     }
 
     public void accept(SemanticChecker sc)

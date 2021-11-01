@@ -1,3 +1,4 @@
+package Semantic.Grammar;
 // Generated from Mxstar.g4 by ANTLR 4.9.2
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -36,16 +37,6 @@ public interface MxstarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitFunctionDef(MxstarParser.FunctionDefContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link MxstarParser#functionVarDef}.
-	 * @param ctx the parse tree
-	 */
-	void enterFunctionVarDef(MxstarParser.FunctionVarDefContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link MxstarParser#functionVarDef}.
-	 * @param ctx the parse tree
-	 */
-	void exitFunctionVarDef(MxstarParser.FunctionVarDefContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link MxstarParser#lambdaFunc}.
 	 * @param ctx the parse tree

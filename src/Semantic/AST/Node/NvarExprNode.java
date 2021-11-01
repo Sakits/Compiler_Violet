@@ -1,15 +1,13 @@
 package Semantic.AST.Node;
 
-import java.util.ArrayList;
 import Semantic.AST.SemanticChecker;
 
-public class VarDefNode extends StNode
+public class NvarExprNode extends ExprNode
 {
     public String type;
     public int dim;
-    public ArrayList<OneVarDefNode> var = new ArrayList<>();
 
-    public VarDefNode(position pos, String type, int dim)
+    public NvarExprNode(position pos, String type, int dim)
     {
         super(pos);
         this.type = type;

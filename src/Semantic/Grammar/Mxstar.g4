@@ -9,10 +9,9 @@ classDef :
     '}' ';'
     ;
 
-functionDef : returnType Identifier '(' functionVarDef ')' suite;
-functionVarDef : (funcVarDef (',' funcVarDef)*)?;
-lambdaFunc : '[' '&' ']' ('(' functionVarDef ')')? '->' suite '(' expression? ')';
-constructFuncDef : Identifier '(' functionVarDef ')' suite;
+functionDef : returnType Identifier '(' (funcVarDef (',' funcVarDef)*)? ')' suite;
+lambdaFunc : '[' '&' ']' ('(' (funcVarDef (',' funcVarDef)*)? ')')? '->' suite '(' expression? ')';
+constructFuncDef : Identifier '(' (funcVarDef (',' funcVarDef)*)? ')' suite;
 
 suite : '{' statement* '}';
 
@@ -40,7 +39,7 @@ expression
     | New newType ('(' expression? ')')?                            # nvarTag
     | expression '[' expression ']'                                 # addrTag
     | expression '(' (expression (',' expression)*)? ')'            # callTag
-    | expression '.' Identifier (bra = '(' expression? ')')?        # objTag
+    | expression '.' Identifier                                     # objTag
     | op = '!' expression                                           # prefixTag
     | op = ('++' | '--') expression                                 # prefixTag
     | op = '-' expression                                           # prefixTag
@@ -113,7 +112,7 @@ This : 'this';
 // PrintlnInt : 'printlnInt';
 // GetString : 'getString';
 // GetInt : 'getInt';
-// ToString : 'toString';
+// getText : 'getText';
 
 // Length : 'length';
 // Substring : 'substring';

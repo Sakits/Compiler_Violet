@@ -1,3 +1,4 @@
+package Semantic.Grammar;
 // Generated from Mxstar.g4 by ANTLR 4.9.2
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -27,12 +28,6 @@ public interface MxstarVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitFunctionDef(MxstarParser.FunctionDefContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link MxstarParser#functionVarDef}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFunctionVarDef(MxstarParser.FunctionVarDefContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link MxstarParser#lambdaFunc}.
 	 * @param ctx the parse tree

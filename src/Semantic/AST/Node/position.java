@@ -24,9 +24,4 @@ public class position
     {
         this(ctx.getStart());
     }
-
-    public boolean cmp(position a, position b)
-    {
-        return (a.row != b.row) ? a.row < b.row : a.col < b.col;
-    }
 }

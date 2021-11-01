@@ -1,5 +1,7 @@
 package Semantic.AST.Node;
 
+import Semantic.AST.SemanticChecker;
+
 abstract public class ASTNode
 {
     public position pos;
@@ -8,4 +10,6 @@ abstract public class ASTNode
     {
         this.pos = pos;
     }
+
+    abstract public void accept(SemanticChecker sc);
 }

@@ -1,3 +1,4 @@
+package Semantic.Grammar;
 // Generated from Mxstar.g4 by ANTLR 4.9.2
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -46,18 +47,6 @@ public class MxstarBaseListener implements MxstarListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitFunctionDef(MxstarParser.FunctionDefContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterFunctionVarDef(MxstarParser.FunctionVarDefContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitFunctionVarDef(MxstarParser.FunctionVarDefContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

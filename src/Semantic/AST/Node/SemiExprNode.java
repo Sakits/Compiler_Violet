@@ -2,14 +2,11 @@ package Semantic.AST.Node;
 
 import Semantic.AST.SemanticChecker;
 
-public class ReturnNode extends StNode
+public class SemiExprNode extends ExprNode
 {
-    public ExprNode expr;
-
-    public ReturnNode(position pos, ExprNode expr)
+    public SemiExprNode(position pos)
     {
         super(pos);
-        this.expr = expr;
     }
 
     public void accept(SemanticChecker sc)

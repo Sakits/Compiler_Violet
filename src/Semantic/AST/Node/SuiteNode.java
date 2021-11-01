@@ -1,15 +1,15 @@
 package Semantic.AST.Node;
 
+import java.util.ArrayList;
 import Semantic.AST.SemanticChecker;
 
-public class ReturnNode extends StNode
+public class SuiteNode extends StNode
 {
-    public ExprNode expr;
+    public ArrayList<StNode> st = new ArrayList<>();
 
-    public ReturnNode(position pos, ExprNode expr)
+    public SuiteNode(position pos)
     {
         super(pos);
-        this.expr = expr;
     }
 
     public void accept(SemanticChecker sc)

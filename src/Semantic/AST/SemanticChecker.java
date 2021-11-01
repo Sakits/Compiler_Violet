@@ -1,193 +1,32 @@
 package Semantic.AST;
 
 import Semantic.AST.Node.*;
-import Semantic.AST.Utils.*;
+// import Semantic.AST.Utils.*;
 
-public class SemanticChecker 
+public class SemanticChecker
 {
-    public globalScope gScope;
-    public Scope nowScope;
-    public ClassNode nowClass = null;
-
-    public SemanticChecker(globalScope gScope)
-    {
-        nowScope = this.gScope = gScope;
-    }
-
-    public void visit(RootNode now)
-    {
-        boolean flag = false;
-        for (var func : now.func)
-        if (func.idt == "main")
-        {
-            if (flag == true)
-                throw new semanticError(func.pos, "have more than one main()");
-            flag = true;
-            if (func.returnType != "int")
-                throw new semanticError(func.pos, "Wrong main type");
-            if (func.var.size() != 0)
-                throw new semanticError(func.pos, "main() has para");
-        }
-
-        if (flag == false)
-            throw new semanticError(now.pos, "lack of main()");
-
-        now.var.forEach(i -> visit(i));
-        now.cls.forEach(i -> visit(i));
-        now.func.forEach(i -> visit(i));
-    }
-
-    public void visit(VarNode now)
-    {
-        if (now == null) return;
-
-        if (nowClass != null)
-        {
-            if (nowClass.var.containsKey(now.idt))
-                throw new semanticError(now.pos, "multiple definition of " + now.idt);
-            nowClass.var.put(now.idt, now);
-        }
-        else
-            nowScope.defVar(now.pos, now.idt, now);
-
-        if (now.val != null)
-        {
-            visit(now.val);
-            if (now.type != now.val.type || now.dim != now.val.dim)
-                throw new semanticError(now.pos, "init type not match");
-        }
-    }
-
-    public void visit(ClassNode now)
-    {
-        if (now == null) return;
-
-        nowClass = now;
-        for (var i : now.var.keySet())
-            visit(now.var.get(i));
-
-        for (var i : now.func.keySet())
-            visit(now.func.get(i));
-
-        nowClass = null;
-    }
-
-    public void visit(FuncNode now)
-    {
-        if (now == null) return;
-
-        if (now.returnType != "void")
-        {
-            if (gScope.types.containsKey(now.returnType) == false)
-                throw new semanticError(now.pos, "no such returnType " + now.returnType);
-        }
-
-        // gScope.getFunc(now.pos, now);
-
-        nowScope = new Scope(nowScope);
-        now.var.forEach(i -> visit(i));
-        now.st.forEach(i -> visit(i, now));
-        nowScope = nowScope.faScope;
-    }
-
-    public void visit(BlockNode now, FuncNode nowfunc)
-    {
-        if (now == null) return;
-
-        // scope
-        now.st.forEach(i -> visit(i, nowfunc));
-    }
-
-    public void visit(IfStNode now, FuncNode nowfunc)
-    {
-        if (now == null) return;
-
-        visit(now.cond);
-        visit(now.trueSt, nowfunc);
-        visit(now.falseSt, nowfunc);
-    }
-
-    public void visit(ReturnNode now, FuncNode nowfunc)
-    {
-        if (now == null) return;
-
-        visit(now.expr);
-    }
-
-    public void visit(WhileNode now, FuncNode nowfunc)
-    {
-        if (now == null) return;
-
-        visit(now.cond);
-        visit(now.st, nowfunc);
-    }
-
-    public void visit(ForNode now, FuncNode nowfunc)
-    {
-        if (now == null) return;
-
-        now.var.forEach(i -> visit(i));
-
-        visit(now.init);
-        visit(now.cond);
-        visit(now.next);
-
-        visit(now.st);
-    }
-
-    public void visit(BreakNode now, FuncNode nowfunc) {}
-
-    public void visit(ContinueNode now, FuncNode nowfunc) {}
-
-    public void visit(VarDefNode now, FuncNode nowfunc)
-    {
-        now.var.forEach(i -> visit(i));
-    }
-
-    public void visit(PrimaryNode now) {}
-
-    public void visit(ExprinNode now)
-    {
-        visit(now.expr);
-    }
-
-    public void visit(AddrNode now)
-    {
-        visit(now.ptr);
-        visit(now.offset);
-    }
-
-    public void visit(CallNode now)
-    {
-        visit(now.obj);
-        now.para.forEach(i -> visit(i));
-    }
-
-    public void visit(ObjNode now)
-    {
-        visit(now.obj);
-        visit(now.para);
-    }
-
-    public void visit(PrefixNode now)
-    {
-        visit(now.obj);
-    }
-
-    public void visit(SuffixNode now)
-    {
-        visit(now.obj);
-    }
-
-    public void visit(BinaryNode now)
-    {
-        visit(now.lhs);
-        visit(now.rhs);
-    }
-
-    public void visit(AssignNode now)
-    {
-        visit(now.dst);
-        visit(now.src);
-    }
+    public void visit(AddrExprNode now) {}
+    public void visit(AssignExprNode now) {}
+    public void visit(BinaryExprNode now) {}
+    public void visit(BraExprNode now) {}
+    public void visit(BreakStNode now) {}
+    public void visit(CallExprNode now) {}
+    public void visit(ClassDefNode now) {}
+    public void visit(ContinueStNode now) {}
+    public void visit(ExprStNode now) {}
+    public void visit(ForStNode now) {}
+    public void visit(FuncDefNode now) {}
+    public void visit(FuncVarDefNode now) {}
+    public void visit(IfStNode now) {}
+    public void visit(NvarExprNode now) {}
+    public void visit(ObjExprNode now) {}
+    public void visit(OneVarDefNode now) {}
+    public void visit(PrefixExprNode now) {}
+    public void visit(PrimaryExprNode now) {}
+    public void visit(ReturnNode now) {}
+    public void visit(RootNode now) {}
+    public void visit(SemiExprNode now) {}
+    public void visit(StNode now) {}
+    public void visit(SuffixExprNode now) {}
+    public void visit(VarDefNode now) {}
 }
