@@ -21,6 +21,16 @@ public class FuncDefNode extends ASTNode
         this.st = st;
     }
 
+    public FuncDefNode(position pos, int dim, String return_type, String idt, StNode st, Boolean is_returned)
+    {
+        super(pos);
+        this.dim = dim;
+        this.return_type = return_type;
+        this.idt = idt;
+        this.st = st;
+        this.is_returned = is_returned;
+    }
+
     public void accept(ASTVisitor visitor)
     {
         visitor.visit(this);

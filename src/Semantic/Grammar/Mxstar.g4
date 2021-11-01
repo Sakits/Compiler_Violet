@@ -41,6 +41,7 @@ expression
     | expression '(' (expression (',' expression)*)? ')'            # callTag
     | expression '.' Identifier                                     # objTag
     | op = '!' expression                                           # prefixTag
+    | op = '~' expression                                           # prefixTag
     | op = ('++' | '--') expression                                 # prefixTag
     | op = '-' expression                                           # prefixTag
     | op = '+' expression                                           # prefixTag
@@ -120,7 +121,7 @@ This : 'this';
 // Ord : 'ord';
 
 ConstString : '"' ('\\"' | .)*? '"';
-Identifier : [a-zA-Z_][a-zA-Z0-9_]*;
+Identifier : [a-zA-Z][a-zA-Z0-9_]*;
 Number : [1-9][0-9]* | '0';
 
 Indent : [ \t]+ -> skip;

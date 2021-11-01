@@ -27,18 +27,18 @@ public class SymbolCollector extends ASTVisitor
         ClassDefNode Str = new ClassDefNode(new position(), "string");
 
 
-        Str.func.add(new FuncDefNode(new position(), 0, "int", "length", null));
+        Str.func.add(new FuncDefNode(new position(), 0, "int", "length", null, true));
 
-        FuncDefNode substring = new FuncDefNode(new position(), 0, "string", "substring", null);
+        FuncDefNode substring = new FuncDefNode(new position(), 0, "string", "substring", null, true);
         FuncVarDefNode left = new FuncVarDefNode(new position(), "int", 0, new OneVarDefNode(new position(), "left", null));
         FuncVarDefNode right = new FuncVarDefNode(new position(), "int", 0, new OneVarDefNode(new position(), "right", null));
         substring.var.add(left);
         substring.var.add(right);
         Str.func.add(substring);
 
-        Str.func.add(new FuncDefNode(new position(), 0, "int", "parseInt", null));
+        Str.func.add(new FuncDefNode(new position(), 0, "int", "parseInt", null, true));
 
-        FuncDefNode ord = new FuncDefNode(new position(), 0, "int", "ord", null);
+        FuncDefNode ord = new FuncDefNode(new position(), 0, "int", "ord", null, true);
         FuncVarDefNode pos = new FuncVarDefNode(new position(), "int", 0, new OneVarDefNode(new position(), "pos", null));
         ord.var.add(pos);
         Str.func.add(ord);
@@ -74,14 +74,14 @@ public class SymbolCollector extends ASTVisitor
         printlnInt.var.add(printlnIntpara);
         printlnInt.accept(this);
 
-        FuncDefNode getString = new FuncDefNode(new position(), 0, "string", "getString", null);
+        FuncDefNode getString = new FuncDefNode(new position(), 0, "string", "getString", null, true);
         getString.accept(this);
 
-        FuncDefNode getInt = new FuncDefNode(new position(), 0, "int", "getInt", null);
+        FuncDefNode getInt = new FuncDefNode(new position(), 0, "int", "getInt", null, true);
         getInt.accept(this);
 
         FuncVarDefNode toStringpara = new FuncVarDefNode(new position(), "int", 0, new OneVarDefNode(new position(), "i", null));
-        FuncDefNode toString = new FuncDefNode(new position(), 0, "string", "toString", null);
+        FuncDefNode toString = new FuncDefNode(new position(), 0, "string", "toString", null, true);
         toString.var.add(toStringpara);
         toString.accept(this);
     }
@@ -116,7 +116,7 @@ public class SymbolCollector extends ASTVisitor
         if (symbols.type_is_used(now.idt))
             throw new SemanticError(now.pos, "symbol " + now.idt + " has been defined");
 
-        now.func.add(new FuncDefNode(new position(), 0, "int", "size", null));
+        now.func.add(new FuncDefNode(new position(), 0, "int", "size", null, true));
 
         symbols.add_type(now.idt, now);
         now_class = now;
