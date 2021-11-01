@@ -84,6 +84,8 @@ public class SemanticChecker extends ASTVisitor
             if (!now_func.return_type.equals("void"))
                 throw new SemanticError(now.pos, "lack of return expression");
         }
+
+        now_func.is_returned = true;
     }
 
     public void visit(FuncVarDefNode now)
@@ -91,6 +93,8 @@ public class SemanticChecker extends ASTVisitor
         if (symbols.get_type(now.type) == null)
             throw new SemanticError(now.pos, "no such type " + now.type);
         now.one_var.accept(this);
+        now.one_var.type = now.type;
+        now.one_var.dim = now.dim;
     }
 
     public void visit(VarDefNode now)
@@ -157,9 +161,9 @@ public class SemanticChecker extends ASTVisitor
             throw new SemanticError(now.rhs.pos, "rhs is func");
 
         if (!now.rhs.type.equals("null") && !now.lhs.type.equals(now.rhs.type))
-            throw new SemanticError(now.pos, "lhs and rhs type not match");
+            throw new SemanticError(now.pos, "assign lhs and rhs type not match");
         if (!now.rhs.type.equals("null") && now.lhs.dim != now.rhs.dim)
-            throw new SemanticError(now.pos, "lhs and rhs dimension not match");
+            throw new SemanticError(now.pos, "assign lhs and rhs dimension not match");
         if (now.lhs.type.equals("string") && now.rhs.type.equals("null"))
             throw new SemanticError(now.pos, "string can't be assigned with null");
 
@@ -193,18 +197,24 @@ public class SemanticChecker extends ASTVisitor
         }
         else
         {
+            // System.out.println(now.lhs.type);
+            // System.out.println(now.op);
+            // System.out.println(now.rhs.type);
             if (!now.lhs.type.equals(now.rhs.type))
                 throw new SemanticError(now.pos, "lhs and rhs type not match");
             if (now.lhs.dim != now.rhs.dim)
                 throw new SemanticError(now.pos, "lhs and rhs dimension not match");
-            if (now.lhs.type.equals("bool"));
+            if (now.lhs.type.equals("bool"))
                 if (now.op.equals("<=") || now.op.equals(">=") || now.op.equals("<") || now.op.equals(">"))    
                     throw new SemanticError(now.pos, "bool can't use op " + now.op);
             if (now.lhs.type.equals("string"))
                 if (!now.op.equals("+") && !now.op.equals("<=") && !now.op.equals(">=") && !now.op.equals("<") && !now.op.equals(">"))
                     throw new SemanticError(now.pos, "string can't use op " + now.op);
 
-            now.type = now.lhs.type;
+            if (now.op.equals("<=") || now.op.equals(">=") || now.op.equals("<") || now.op.equals(">"))    
+                now.type = "bool";
+            else
+                now.type = now.lhs.type;
             now.dim = now.lhs.dim;
         }
     }
@@ -389,7 +399,7 @@ public class SemanticChecker extends ASTVisitor
             now.type = "string";
     }
 
-    public void visit(SemiExprNode now)
+    public void visit(SemiStNode now)
     {
     }
 

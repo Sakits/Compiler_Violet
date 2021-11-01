@@ -3,9 +3,9 @@ package Semantic.AST.Node;
 import Semantic.AST.ASTVisitor;
 import Utils.position;
 
-public class SemiExprNode extends ExprNode
+public class SemiStNode extends StNode
 {
-    public SemiExprNode(position pos)
+    public SemiStNode(position pos)
     {
         super(pos);
     }

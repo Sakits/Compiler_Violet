@@ -162,7 +162,7 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode>
 
     @Override public ASTNode visitSemiTag(MxstarParser.SemiTagContext ctx)
     {
-        return new SemiExprNode(new position(ctx));
+        return new SemiStNode(new position(ctx));
     }
 
     @Override public ASTNode visitFuncVarDef(MxstarParser.FuncVarDefContext ctx)
