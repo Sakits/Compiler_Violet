@@ -59,8 +59,9 @@ public class SemanticChecker extends ASTVisitor
 
         now_scope = new Scope(now_scope);
         now_func = now;
-        now.var.forEach(i -> i.accept(this));   
-        now.st.accept(this);
+        now.var.forEach(i -> i.accept(this));  
+        if (now.st != null) 
+            now.st.accept(this);
         now_func = null;
         now_scope = now_scope.fa_scope;
 
@@ -288,6 +289,8 @@ public class SemanticChecker extends ASTVisitor
             now.is_func = cls.funcs.get(now.idt);
             now.type = now.is_func.return_type;
             now.dim = now.is_func.dim;
+            if (now.idt.equals("size") && now.dim == 0)
+                throw new SemanticError(now.pos, "only Array can use size()");
         }
         else
             throw new SemanticError(now.pos, "obj has no such idt");

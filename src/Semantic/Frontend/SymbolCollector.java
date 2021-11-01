@@ -13,20 +13,82 @@ public class SymbolCollector extends ASTVisitor
     public SymbolCollector(Symbols symbols)
     {
         this.symbols = symbols;
+
+        ClassDefNode Int = new ClassDefNode(new position(), "int");
+        now_class = Int;
+        Int.accept(this);
+        now_class = null;
+
+        ClassDefNode Bool = new ClassDefNode(new position(), "bool");
+        now_class = Bool;
+        Bool.accept(this);
+        now_class = null;
+
+        ClassDefNode Str = new ClassDefNode(new position(), "string");
+
+
+        Str.func.add(new FuncDefNode(new position(), 0, "int", "length", null));
+
+        FuncDefNode substring = new FuncDefNode(new position(), 0, "string", "substring", null);
+        FuncVarDefNode left = new FuncVarDefNode(new position(), "int", 0, new OneVarDefNode(new position(), "left", null));
+        FuncVarDefNode right = new FuncVarDefNode(new position(), "int", 0, new OneVarDefNode(new position(), "right", null));
+        substring.var.add(left);
+        substring.var.add(right);
+        Str.func.add(substring);
+
+        Str.func.add(new FuncDefNode(new position(), 0, "int", "parseInt", null));
+
+        FuncDefNode ord = new FuncDefNode(new position(), 0, "int", "ord", null);
+        FuncVarDefNode pos = new FuncVarDefNode(new position(), "int", 0, new OneVarDefNode(new position(), "pos", null));
+        ord.var.add(pos);
+        Str.func.add(ord);
+
+        now_class = Str;
+        Str.accept(this);
+        now_class = null;
+        
+
+        ClassDefNode Void = new ClassDefNode(new position(), "void");
+        now_class = Void;
+        Void.accept(this);
+        now_class = null;
+
+        
+        FuncVarDefNode printpara = new FuncVarDefNode(new position(), "string", 0, new OneVarDefNode(new position(), "str", null));
+        FuncDefNode print = new FuncDefNode(new position(), 0, "void", "print", null);
+        print.var.add(printpara);
+        print.accept(this);
+
+        FuncVarDefNode printlnpara = new FuncVarDefNode(new position(), "string", 0, new OneVarDefNode(new position(), "str", null));
+        FuncDefNode println = new FuncDefNode(new position(), 0, "void", "println", null);
+        println.var.add(printlnpara);
+        println.accept(this);
+
+        FuncVarDefNode printIntpara = new FuncVarDefNode(new position(), "int", 0, new OneVarDefNode(new position(), "n", null));
+        FuncDefNode printInt = new FuncDefNode(new position(), 0, "void", "printInt", null);
+        printInt.var.add(printIntpara);
+        printInt.accept(this);
+
+        FuncVarDefNode printlnIntpara = new FuncVarDefNode(new position(), "int", 0, new OneVarDefNode(new position(), "n", null));
+        FuncDefNode printlnInt = new FuncDefNode(new position(), 0, "void", "printlnInt", null);
+        printlnInt.var.add(printlnIntpara);
+        printlnInt.accept(this);
+
+        FuncDefNode getString = new FuncDefNode(new position(), 0, "string", "getString", null);
+        getString.accept(this);
+
+        FuncDefNode getInt = new FuncDefNode(new position(), 0, "int", "getInt", null);
+        getInt.accept(this);
+
+        FuncVarDefNode toStringpara = new FuncVarDefNode(new position(), "int", 0, new OneVarDefNode(new position(), "i", null));
+        FuncDefNode toString = new FuncDefNode(new position(), 0, "string", "toString", null);
+        toString.var.add(toStringpara);
+        toString.accept(this);
     }
 
     @Override
     public void visit(RootNode now)
     {
-        ClassDefNode Int = new ClassDefNode(new position(), "int");
-        Int.accept(this);
-        ClassDefNode Bool = new ClassDefNode(new position(), "bool");
-        Bool.accept(this);
-        ClassDefNode Str = new ClassDefNode(new position(), "string");
-        Str.accept(this);
-        ClassDefNode Void = new ClassDefNode(new position(), "void");
-        Void.accept(this);
-
         now.cls.forEach(i -> i.accept(this));
         now.func.forEach(i -> i.accept(this));   
     }
@@ -54,9 +116,12 @@ public class SymbolCollector extends ASTVisitor
         if (symbols.type_is_used(now.idt))
             throw new SemanticError(now.pos, "symbol " + now.idt + " has been defined");
 
+        now.func.add(new FuncDefNode(new position(), 0, "int", "size", null));
+
         symbols.add_type(now.idt, now);
         now_class = now;
         now.var.forEach(i -> i.accept(this));
+        now.func.forEach(i -> i.accept(this));
         now_class = null;
     }
 

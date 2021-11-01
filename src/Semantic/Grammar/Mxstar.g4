@@ -18,7 +18,7 @@ suite : '{' statement* '}';
 statement
     : suite                                                         # blockTag
     | ifStat                                                        # ifTag
-    | Return expression ';'                                         # returnTag
+    | Return expression? ';'                                         # returnTag
     | whileStat                                                     # whileTag
     | forStat                                                       # forTag
     | Break ';'                                                     # breakTag
