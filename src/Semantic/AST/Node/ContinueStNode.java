@@ -1,6 +1,7 @@
 package Semantic.AST.Node;
 
-import Semantic.AST.SemanticChecker;
+import Semantic.AST.ASTVisitor;
+import Utils.position;
 
 public class ContinueStNode extends StNode
 {
@@ -9,8 +10,8 @@ public class ContinueStNode extends StNode
         super(pos);
     }
 
-    public void accept(SemanticChecker sc)
+    public void accept(ASTVisitor visitor)
     {
-        sc.visit(this);
+        visitor.visit(this);
     }
 }

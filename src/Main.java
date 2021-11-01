@@ -20,8 +20,8 @@ public class Main
         // InputStream input = new FileInputStream(name);
         InputStream input = System.in;
 
-        // try
-        // {
+        try
+        {
             
             // GlobalScope gscope = new globalScope(null);
 
@@ -32,12 +32,11 @@ public class Main
             RootNode ast_root = (RootNode)ast_builder.visit(parse_tree_root);
             // new SymbolCollector(gscope).visit(ast_root);
             // new SemanticChecker(gscope).visit(ast_root);
-        // }
-        // catch (error err) 
-        // {
-        //     System.err.println(err.toString());
-        //     throw new RuntimeException();
-        // }
-        
+        }
+        catch (Error err) 
+        {
+            System.err.println(err.toString());
+            throw new RuntimeException();
+        }
     }
 }

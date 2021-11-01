@@ -1,6 +1,7 @@
 package Semantic.AST.Node;
 
-import Semantic.AST.SemanticChecker;
+import Semantic.AST.ASTVisitor;
+import Utils.position;
 
 public class BinaryExprNode extends ExprNode
 {
@@ -15,8 +16,8 @@ public class BinaryExprNode extends ExprNode
         this.rhs = rhs;
     }
 
-    public void accept(SemanticChecker sc)
+    public void accept(ASTVisitor visitor)
     {
-        sc.visit(this);
+        visitor.visit(this);
     }
 }

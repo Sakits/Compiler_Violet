@@ -1,4 +1,4 @@
-package Semantic.AST.Node;
+package Utils;
 
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -23,5 +23,10 @@ public class position
     public position(ParserRuleContext ctx)
     {
         this(ctx.getStart());
+    }
+
+    public String toString()
+    {
+        return "(" + row + ", " + col + ")";
     }
 }

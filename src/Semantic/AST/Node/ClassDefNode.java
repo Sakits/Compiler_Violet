@@ -1,14 +1,18 @@
 package Semantic.AST.Node;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
-import Semantic.AST.SemanticChecker;
+import Semantic.AST.ASTVisitor;
+import Utils.position;
 
 public class ClassDefNode extends ASTNode
 {
     public String idt;
     public ArrayList<FuncDefNode> func = new ArrayList<>();
     public ArrayList<VarDefNode> var = new ArrayList<>();
+    public HashMap<String, FuncDefNode> funcs = new HashMap<>();
+    public HashMap<String, OneVarDefNode> vars = new HashMap<>();
 
     public ClassDefNode(position pos, String idt)
     {
@@ -16,8 +20,8 @@ public class ClassDefNode extends ASTNode
         this.idt = idt;
     }
 
-    public void accept(SemanticChecker sc)
+    public void accept(ASTVisitor visitor)
     {
-        sc.visit(this);
+        visitor.visit(this);
     }
 }

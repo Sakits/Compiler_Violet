@@ -1,10 +1,12 @@
 package Semantic.AST.Node;
 
-import Semantic.AST.SemanticChecker;
+import Semantic.AST.ASTVisitor;
+import Utils.position;
 
 public class OneVarDefNode extends ASTNode
 {
-    public String idt;
+    public String idt, type;
+    public int dim;
     public ExprNode init_val;
 
     public OneVarDefNode(position pos, String idt, ExprNode init_val)
@@ -14,8 +16,8 @@ public class OneVarDefNode extends ASTNode
         this.init_val = init_val;
     }
 
-    public void accept(SemanticChecker sc)
+    public void accept(ASTVisitor visitor)
     {
-        sc.visit(this);
+        visitor.visit(this);
     }
 }

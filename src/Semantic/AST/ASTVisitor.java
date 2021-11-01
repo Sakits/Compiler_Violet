@@ -1,9 +1,8 @@
 package Semantic.AST;
 
 import Semantic.AST.Node.*;
-// import Semantic.AST.Utils.*;
 
-public class SemanticChecker
+public class ASTVisitor 
 {
     public void visit(AddrExprNode now) {}
     public void visit(AssignExprNode now) {}

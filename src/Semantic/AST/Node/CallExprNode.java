@@ -1,7 +1,8 @@
 package Semantic.AST.Node;
 
 import java.util.ArrayList;
-import Semantic.AST.SemanticChecker;
+import Semantic.AST.ASTVisitor;
+import Utils.position;
 
 public class CallExprNode extends ExprNode
 {
@@ -14,8 +15,8 @@ public class CallExprNode extends ExprNode
         this.obj = obj;
     }
 
-    public void accept(SemanticChecker sc)
+    public void accept(ASTVisitor visitor)
     {
-        sc.visit(this);
+        visitor.visit(this);
     }
 }

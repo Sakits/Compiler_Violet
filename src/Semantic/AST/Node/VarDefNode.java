@@ -1,7 +1,8 @@
 package Semantic.AST.Node;
 
 import java.util.ArrayList;
-import Semantic.AST.SemanticChecker;
+import Semantic.AST.ASTVisitor;
+import Utils.position;
 
 public class VarDefNode extends StNode
 {
@@ -16,8 +17,8 @@ public class VarDefNode extends StNode
         this.dim = dim;
     }
 
-    public void accept(SemanticChecker sc)
+    public void accept(ASTVisitor visitor)
     {
-        sc.visit(this);
+        visitor.visit(this);
     }
 }

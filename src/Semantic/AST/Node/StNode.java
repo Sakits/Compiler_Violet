@@ -1,5 +1,6 @@
 package Semantic.AST.Node;
 
+import Utils.position;
 
 public abstract class StNode extends ASTNode 
 {

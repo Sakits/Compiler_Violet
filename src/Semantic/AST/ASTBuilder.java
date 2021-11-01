@@ -3,6 +3,7 @@ package Semantic.AST;
 import Semantic.AST.Node.*;
 import Semantic.Grammar.MxstarBaseVisitor;
 import Semantic.Grammar.MxstarParser;
+import Utils.position;
 
 public class ASTBuilder extends MxstarBaseVisitor<ASTNode>
 {
