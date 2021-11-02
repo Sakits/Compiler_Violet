@@ -178,8 +178,15 @@ public class SemanticChecker extends ASTVisitor
             throw new SemanticError(now.pos, "assign lhs and rhs type not match");
         if (!now.rhs.type.equals("null") && now.lhs.dim != now.rhs.dim)
             throw new SemanticError(now.pos, "assign lhs and rhs dimension not match");
+            
+        if (now.lhs.type.equals("int") && now.rhs.type.equals("null"))
+            throw new SemanticError(now.pos, "int can't be assigned with null");
+        if (now.lhs.type.equals("bool") && now.rhs.type.equals("null"))
+            throw new SemanticError(now.pos, "bool can't be assigned with null");
         if (now.lhs.type.equals("string") && now.rhs.type.equals("null"))
             throw new SemanticError(now.pos, "string can't be assigned with null");
+        if (now.lhs.type.equals("void") && now.rhs.type.equals("null"))
+            throw new SemanticError(now.pos, "void can't be assigned with null");
 
         now.type = now.lhs.type;
         now.dim = now.lhs.dim;
@@ -211,9 +218,6 @@ public class SemanticChecker extends ASTVisitor
         }
         else
         {
-            // System.out.println(now.lhs.type);
-            // System.out.println(now.op);
-            // System.out.println(now.rhs.type);
             if (!now.lhs.type.equals(now.rhs.type))
                 throw new SemanticError(now.pos, "lhs and rhs type not match");
             if (now.lhs.dim != now.rhs.dim)
@@ -245,6 +249,7 @@ public class SemanticChecker extends ASTVisitor
 
         now.type = now.expr.type;
         now.dim = now.expr.dim;
+        now.is_left_val = now.expr.is_left_val;
         if (now.expr.tobe_left_val == true)
             now.is_left_val = true;
         else
@@ -338,7 +343,8 @@ public class SemanticChecker extends ASTVisitor
         }
         else if (now.idt.equals("size"))
         {
-            
+            now.is_func = symbols.get_func("__builtin_size");
+            now.type = "int";
         }
         else
             throw new SemanticError(now.pos, "Array only have size() method");

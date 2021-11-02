@@ -85,6 +85,9 @@ public class SymbolCollector extends ASTVisitor
         FuncDefNode toString = new FuncDefNode(new position(), 0, "string", "toString", null, true);
         toString.var.add(toStringpara);
         toString.accept(this);
+
+        FuncDefNode size = new FuncDefNode(new position(), 0, "int", "__builtin_size", null);
+        size.accept(this);
     }
 
     @Override
