@@ -124,7 +124,6 @@ public class SemanticChecker extends ASTVisitor
 
     public void visit(OneVarDefNode now)
     {
-
         if (symbols.type_is_used(now.idt))
             throw new SemanticError(now.pos, "multiple defines of " + now.idt);
         if (now_scope.get_var(now.idt, false) != null)
@@ -178,7 +177,7 @@ public class SemanticChecker extends ASTVisitor
             throw new SemanticError(now.pos, "assign lhs and rhs type not match");
         if (!now.rhs.type.equals("null") && now.lhs.dim != now.rhs.dim)
             throw new SemanticError(now.pos, "assign lhs and rhs dimension not match");
-            
+
         if (now.lhs.dim == 0)
         {
             if (now.lhs.type.equals("int") && now.rhs.type.equals("null"))
@@ -414,13 +413,12 @@ public class SemanticChecker extends ASTVisitor
 
             if (var != null && func != null)
             {
-                if (cmp(var.pos, now_class.pos))
-                    var = null;
-                else
-                    func = null;
+                now.type = var.type;
+                now.dim = var.dim;
+                now.is_left_val = true;
+                now.is_func = func;
             }
-
-            if (var != null)
+            else if (var != null)
             {
                 now.type = var.type;
                 now.dim = var.dim;

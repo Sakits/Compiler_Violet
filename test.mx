@@ -1,61 +1,31 @@
 /*
 Test Package: Sema_Local_Preview
-Test Target: Misc
-Author: 15' Zhenjia Xu
-Time: 2019-10-20
+Test Target: Basic
+Author: 16' Xiaoyuan Liu
+Time: 2019-11-11
 Verdict: Success
-Origin Package: Semantic Extended
+Origin Package: Semantic Pretest
 */
-
-class ClassA{
-	int num;
-	string str;
-	bool[] bool_arr;
-	ClassA(){
-		str = "";
-		num = 1;
-		bool_arr = null;
-		bool_arr = new bool[100];
-		return;
-	}
-	ClassA getClassA(int x){
-		ClassA tmp = new ClassA;
-		tmp.num = x;
-		this.num = x;
-		return tmp;
-	}
-	string getString(){
-		return str;
+// function in function
+// null as para
+int too(int young) {
+    return young;
+}
+int young(int too) {
+    return too;
+}
+int simple(sometimes naive) {
+    return 1926;
+}
+class sometimes {
+	int naive;
+	void make_money() {
+		this.naive++;
 	}
 };
-int Main(int parameter){
-	ClassA a = new ClassA;
-	ClassA b = a.getClassA(parameter);
-	b.num = parameter;
-	parameter = getInt();
-	int[] int_arr = (new int[2][])[3];
-	int number = b.getString().parseInt() + getString().ord(123) % b.getString().substring(1, 3).length();
-	string str1 = "123";
-	string str2 = "456";
-	int num = 0;
-	if(str1 < str2) num++;
-	if(str1 <= str2) num++;
-	if(str1 > str2) num++;
-	if(str1 >= str2) num++;
-	if((str1 + str2) == (str1 + str2)){
-		num++;
-	}else if(false)
-			num--;
-			else --num;
-	for(;;){
-		break;
-	}
-	while(true)
-		continue;
-	println(str1);
-	print(str2);
-	return num;
-}
 int main() {
-    Main(0);
+    sometimes naive = null;
+    print(toString(
+        too(young(too(simple(naive))))
+    ));
 }

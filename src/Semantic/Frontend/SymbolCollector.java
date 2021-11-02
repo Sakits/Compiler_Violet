@@ -108,6 +108,9 @@ public class SymbolCollector extends ASTVisitor
         }
         else
         {
+            if (now.idt.equals("main"))
+                throw new SemanticError(now.pos, "Duplicated name for main");
+
             if (now_class.funcs.containsKey(now.idt))
                 throw new SemanticError(now.pos, "member function " + now.idt + " has been defined");
             if (now.idt.equals(now_class.idt))
@@ -124,6 +127,8 @@ public class SymbolCollector extends ASTVisitor
     @Override
     public void visit(ClassDefNode now)
     {
+        if (now.idt.equals("main"))
+            throw new SemanticError(now.pos, "Duplicated name for main");
         if (symbols.type_is_used(now.idt))
             throw new SemanticError(now.pos, "symbol " + now.idt + " has been defined");
 
