@@ -179,14 +179,17 @@ public class SemanticChecker extends ASTVisitor
         if (!now.rhs.type.equals("null") && now.lhs.dim != now.rhs.dim)
             throw new SemanticError(now.pos, "assign lhs and rhs dimension not match");
             
-        if (now.lhs.type.equals("int") && now.rhs.type.equals("null"))
-            throw new SemanticError(now.pos, "int can't be assigned with null");
-        if (now.lhs.type.equals("bool") && now.rhs.type.equals("null"))
-            throw new SemanticError(now.pos, "bool can't be assigned with null");
-        if (now.lhs.type.equals("string") && now.rhs.type.equals("null"))
-            throw new SemanticError(now.pos, "string can't be assigned with null");
-        if (now.lhs.type.equals("void") && now.rhs.type.equals("null"))
-            throw new SemanticError(now.pos, "void can't be assigned with null");
+        if (now.lhs.dim == 0)
+        {
+            if (now.lhs.type.equals("int") && now.rhs.type.equals("null"))
+                throw new SemanticError(now.pos, "int can't be assigned with null");
+            if (now.lhs.type.equals("bool") && now.rhs.type.equals("null"))
+                throw new SemanticError(now.pos, "bool can't be assigned with null");
+            if (now.lhs.type.equals("string") && now.rhs.type.equals("null"))
+                throw new SemanticError(now.pos, "string can't be assigned with null");
+            if (now.lhs.type.equals("void") && now.rhs.type.equals("null"))
+                throw new SemanticError(now.pos, "void can't be assigned with null");
+        }
 
         now.type = now.lhs.type;
         now.dim = now.lhs.dim;
