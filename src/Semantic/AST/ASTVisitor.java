@@ -17,6 +17,7 @@ public class ASTVisitor
     public void visit(FuncDefNode now) {}
     public void visit(FuncVarDefNode now) {}
     public void visit(IfStNode now) {}
+    public void visit(LambdaExprNode now) {}
     public void visit(NvarExprNode now) {}
     public void visit(ObjExprNode now) {}
     public void visit(OneVarDefNode now) {}

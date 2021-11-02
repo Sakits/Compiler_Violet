@@ -320,8 +320,6 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode>
 
     @Override public ASTNode visitForStat(MxstarParser.ForStatContext ctx)
     {
-        if (ctx == null) return null;
-
         VarDefNode var = null;
         ExprNode init = null, cond = null, next = null;
         if (ctx.varDef() != null)
@@ -339,5 +337,12 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode>
         return now;
     }
 
-    
+    @Override public ASTNode visitLambdaFunc(MxstarParser.LambdaFuncContext ctx)
+    {
+        LambdaExprNode now = new LambdaExprNode(new position(ctx), (StNode) visit(ctx.suite()));
+        ctx.funcVarDef().forEach(i -> now.var.add((FuncVarDefNode) visit(i)));
+        ctx.expression().forEach(i -> now.para.add((ExprNode) visit(i)));
+
+        return now;
+    }
 }
