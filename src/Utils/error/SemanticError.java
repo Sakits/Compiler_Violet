@@ -1,6 +1,5 @@
-package Semantic.Frontend;
+package Utils.error;
 
-import Utils.Error;
 import Utils.position;
 
 public class SemanticError extends Error

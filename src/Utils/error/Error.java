@@ -1,4 +1,6 @@
-package Utils;
+package Utils.error;
+
+import Utils.position;
 
 public abstract class Error extends RuntimeException
 {

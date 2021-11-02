@@ -4,6 +4,7 @@ package Semantic.Frontend;
 import Semantic.AST.ASTVisitor;
 import Semantic.AST.Node.*;
 import Utils.position;
+import Utils.error.SemanticError;
 
 public class SymbolCollector extends ASTVisitor
 {
@@ -106,6 +107,13 @@ public class SymbolCollector extends ASTVisitor
         {
             if (now_class.funcs.containsKey(now.idt))
                 throw new SemanticError(now.pos, "member function " + now.idt + " has been defined");
+            if (now.idt.equals(now_class.idt))
+            {
+                if (now.return_type != null)
+                    throw new SemanticError(now.pos, "Constructor should not have type");
+                else
+                    now.return_type = now_class.idt;
+            }
             now_class.funcs.put(now.idt, now);
         }
     }
@@ -115,8 +123,6 @@ public class SymbolCollector extends ASTVisitor
     {
         if (symbols.type_is_used(now.idt))
             throw new SemanticError(now.pos, "symbol " + now.idt + " has been defined");
-
-        now.func.add(new FuncDefNode(new position(), 0, "int", "size", null, true));
 
         symbols.add_type(now.idt, now);
         now_class = now;

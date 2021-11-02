@@ -13,6 +13,12 @@ public class position
         this.row = 0;
         this.col = 0;
     }
+
+    public position(int row, int col)
+    {
+        this.row = row;
+        this.col = col;
+    }
     
     public position(Token token)
     {

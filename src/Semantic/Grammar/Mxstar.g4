@@ -10,7 +10,7 @@ classDef :
     ;
 
 functionDef : returnType Identifier '(' (funcVarDef (',' funcVarDef)*)? ')' suite;
-lambdaFunc : '[' '&' ']' ('(' (funcVarDef (',' funcVarDef)*)? ')')? '->' suite '(' expression? ')';
+lambdaFunc : '[' '&' ']' ('(' (funcVarDef (',' funcVarDef)*)? ')')? '->' suite '(' (expression (',' expression)*)? ')';
 constructFuncDef : Identifier '(' (funcVarDef (',' funcVarDef)*)? ')' suite;
 
 suite : '{' statement* '}';
@@ -18,14 +18,13 @@ suite : '{' statement* '}';
 statement
     : suite                                                         # blockTag
     | ifStat                                                        # ifTag
-    | Return expression? ';'                                         # returnTag
+    | Return expression? ';'                                        # returnTag
     | whileStat                                                     # whileTag
     | forStat                                                       # forTag
     | Break ';'                                                     # breakTag
     | Continue ';'                                                  # continueTag
     | varDef ';'                                                    # varTag
     | expression ';'                                                # exprTag
-    | lambdaFunc                                                    # lambdaTag
     | ';'                                                           # semiTag
     ; 
 
@@ -42,10 +41,10 @@ expression
     | expression '.' Identifier                                     # objTag
     | op = '!' expression                                           # prefixTag
     | op = '~' expression                                           # prefixTag
-    | op = ('++' | '--') expression                                 # prefixTag
+    | <assoc=right> expression op = ('++' | '--')                   # suffixTag
+    | <assoc=right> op = ('++' | '--') expression                   # prefixTag
     | op = '-' expression                                           # prefixTag
     | op = '+' expression                                           # prefixTag
-    | expression op = ('++' | '--')                                 # suffixTag
     | expression op = ('*' | '/' | '%') expression                  # binaryTag
     | expression op = ('+' | '-') expression                        # binaryTag
     | expression op = ('<<' | '>>') expression                      # binaryTag
@@ -57,6 +56,7 @@ expression
     | expression op = '&&' expression                               # binaryTag
     | expression op = '||' expression                               # binaryTag
     | <assoc=right> expression '=' expression                       # assignTag
+    | lambdaFunc                                                    # lambdaTag
     ;
 
 ifStat :
@@ -120,7 +120,7 @@ This : 'this';
 // ParseInt : 'parseInt';
 // Ord : 'ord';
 
-ConstString : '"' ('\\"' | .)*? '"';
+ConstString : '"' ('\\"' | '\\''\\'  | .)*? '"';
 Identifier : [a-zA-Z][a-zA-Z0-9_]*;
 Number : [1-9][0-9]* | '0';
 

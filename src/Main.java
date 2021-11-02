@@ -13,20 +13,25 @@ import Semantic.Frontend.SymbolCollector;
 import Semantic.Frontend.Symbols;
 import Semantic.Grammar.*;
 // import Semantic.AST.Utils.globalScope;
+import Utils.MxStarErrorListener;
 
 
 public class Main
 {
     public static void main(String[] args) throws Exception
     {
-        // String name = "test.mx";
-        // InputStream input = new FileInputStream(name);
-        InputStream input = System.in;
+        String name = "test.mx";
+        InputStream input = new FileInputStream(name);
+        // InputStream input = System.in;
 
         try
         {
             MxstarLexer lexer = new MxstarLexer(CharStreams.fromStream(input));
+            lexer.removeErrorListeners();
+            lexer.addErrorListener(new MxStarErrorListener());
             MxstarParser parser = new MxstarParser(new CommonTokenStream(lexer));
+            parser.removeErrorListeners();
+            parser.addErrorListener(new MxStarErrorListener());
             ParseTree parse_tree_root = parser.program();
             ASTBuilder ast_builder = new ASTBuilder();
             RootNode ast_root = (RootNode)ast_builder.visit(parse_tree_root);

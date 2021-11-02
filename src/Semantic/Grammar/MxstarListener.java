@@ -176,18 +176,6 @@ public interface MxstarListener extends ParseTreeListener {
 	 */
 	void exitExprTag(MxstarParser.ExprTagContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code lambdaTag}
-	 * labeled alternative in {@link MxstarParser#statement}.
-	 * @param ctx the parse tree
-	 */
-	void enterLambdaTag(MxstarParser.LambdaTagContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code lambdaTag}
-	 * labeled alternative in {@link MxstarParser#statement}.
-	 * @param ctx the parse tree
-	 */
-	void exitLambdaTag(MxstarParser.LambdaTagContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code semiTag}
 	 * labeled alternative in {@link MxstarParser#statement}.
 	 * @param ctx the parse tree
@@ -241,6 +229,18 @@ public interface MxstarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitPrefixTag(MxstarParser.PrefixTagContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code lambdaTag}
+	 * labeled alternative in {@link MxstarParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterLambdaTag(MxstarParser.LambdaTagContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code lambdaTag}
+	 * labeled alternative in {@link MxstarParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitLambdaTag(MxstarParser.LambdaTagContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code objTag}
 	 * labeled alternative in {@link MxstarParser#expression}.

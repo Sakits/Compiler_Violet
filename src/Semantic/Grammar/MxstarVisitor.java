@@ -110,13 +110,6 @@ public interface MxstarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExprTag(MxstarParser.ExprTagContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code lambdaTag}
-	 * labeled alternative in {@link MxstarParser#statement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLambdaTag(MxstarParser.LambdaTagContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code semiTag}
 	 * labeled alternative in {@link MxstarParser#statement}.
 	 * @param ctx the parse tree
@@ -148,6 +141,13 @@ public interface MxstarVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitPrefixTag(MxstarParser.PrefixTagContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code lambdaTag}
+	 * labeled alternative in {@link MxstarParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLambdaTag(MxstarParser.LambdaTagContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code objTag}
 	 * labeled alternative in {@link MxstarParser#expression}.

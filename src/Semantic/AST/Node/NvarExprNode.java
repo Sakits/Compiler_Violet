@@ -1,10 +1,13 @@
 package Semantic.AST.Node;
 
+import java.util.ArrayList;
+
 import Semantic.AST.ASTVisitor;
 import Utils.position;
 
 public class NvarExprNode extends ExprNode
 {
+    public ArrayList<ExprNode> expr = new ArrayList<>();
 
     public NvarExprNode(position pos, String type, int dim)
     {

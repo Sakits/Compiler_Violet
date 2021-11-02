@@ -61,7 +61,7 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode>
             for (var i : ctx.constructFuncDef())
             {
                 FuncDefNode func = (FuncDefNode) visit(i);
-                func.return_type = ctx.Identifier().getText();
+                // func.return_type = ctx.Identifier().getText();
                 now.func.add(func);
             }
         }
@@ -216,7 +216,7 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode>
     {
         String type = ctx.newType().getText();
         NvarExprNode now = new NvarExprNode(new position(ctx), get_type(type), get_dim(type));
-
+        ctx.newType().expression().forEach(i -> now.expr.add((ExprNode) visit(i)));
         return now;
     }
 

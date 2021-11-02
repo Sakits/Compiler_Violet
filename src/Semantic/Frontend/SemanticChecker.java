@@ -3,6 +3,7 @@ package Semantic.Frontend;
 import Semantic.AST.ASTVisitor;
 import Semantic.AST.Node.*;
 import Utils.position;
+import Utils.error.SemanticError;
 
 public class SemanticChecker extends ASTVisitor
 {
@@ -78,6 +79,8 @@ public class SemanticChecker extends ASTVisitor
     {
         if (now.expr != null)
         {
+            if (now_class != null && now_func.idt.equals(now_class.idt))
+                throw new SemanticError(now.pos, "cannot return any value in a constructor");
             now.expr.accept(this);
             if (!now.expr.type.equals("null") && !now.expr.type.equals(now_func.return_type))
                 throw new SemanticError(now.pos, "return type not match");
@@ -122,7 +125,7 @@ public class SemanticChecker extends ASTVisitor
     public void visit(OneVarDefNode now)
     {
 
-        if (symbols.is_used(now.idt))
+        if (symbols.type_is_used(now.idt))
             throw new SemanticError(now.pos, "multiple defines of " + now.idt);
         if (now_scope.get_var(now.idt, false) != null)
             throw new SemanticError(now.pos, "multiple defines of " + now.idt);
@@ -216,11 +219,17 @@ public class SemanticChecker extends ASTVisitor
             if (now.lhs.dim != now.rhs.dim)
                 throw new SemanticError(now.pos, "lhs and rhs dimension not match");
             if (now.lhs.type.equals("bool"))
+            {
                 if (now.op.equals("<=") || now.op.equals(">=") || now.op.equals("<") || now.op.equals(">"))    
-                    throw new SemanticError(now.pos, "bool can't use op " + now.op);
-            if (now.lhs.type.equals("string"))
+                    throw new SemanticError(now.pos, "bool can't use operator " + now.op);
+            }
+            else if (now.lhs.type.equals("string"))
+            {
                 if (!now.op.equals("+") && !now.op.equals("<=") && !now.op.equals(">=") && !now.op.equals("<") && !now.op.equals(">"))
                     throw new SemanticError(now.pos, "string can't use op " + now.op);
+            }
+            else if (!now.lhs.type.equals("int"))
+                throw new SemanticError(now.pos, "operator " + now.op + " cannot applied to " + now.lhs.type);
 
             if (now.op.equals("<=") || now.op.equals(">=") || now.op.equals("<") || now.op.equals(">"))    
                 now.type = "bool";
@@ -291,6 +300,13 @@ public class SemanticChecker extends ASTVisitor
     {
         if (symbols.get_type(now.type) == null)
             throw new SemanticError(now.pos, "no such type " + now.type);
+
+        for (var i : now.expr)
+        {
+            i.accept(this);
+            if (i.is_func != null || i.is_class != null || i.dim != 0 || !i.type.equals("int"))
+                throw new SemanticError(i.pos, "The size of array should be of int type");
+        }
         
         now.tobe_left_val = true;
     }
@@ -302,23 +318,30 @@ public class SemanticChecker extends ASTVisitor
             throw new SemanticError(now.pos, "class or func can't use .");
 
         ClassDefNode cls = symbols.get_type(now.obj.type);
-        if (cls.vars.containsKey(now.idt))
-        {
-            now.type = cls.vars.get(now.idt).type;
-            now.dim = cls.vars.get(now.idt).dim;
-            now.is_left_val = true;
-        }
-        else if (cls.funcs.containsKey(now.idt))
-        {
-            if (now.idt.equals("size") && now.obj.dim == 0)
-                throw new SemanticError(now.pos, "only Array can use size()");
 
-            now.is_func = cls.funcs.get(now.idt);
-            now.type = now.is_func.return_type;
-            now.dim = now.is_func.dim;
+        if (now.obj.dim == 0)
+        {
+            if (cls.vars.containsKey(now.idt))
+            {
+                now.type = cls.vars.get(now.idt).type;
+                now.dim = cls.vars.get(now.idt).dim;
+                now.is_left_val = true;
+            }
+            else if (cls.funcs.containsKey(now.idt))
+            {
+                now.is_func = cls.funcs.get(now.idt);
+                now.type = now.is_func.return_type;
+                now.dim = now.is_func.dim;
+            }
+            else
+                throw new SemanticError(now.pos, "obj has no such idt");
+        }
+        else if (now.idt.equals("size"))
+        {
+            
         }
         else
-            throw new SemanticError(now.pos, "obj has no such idt");
+            throw new SemanticError(now.pos, "Array only have size() method");
     }
 
     public void visit(PrefixExprNode now)
@@ -334,7 +357,7 @@ public class SemanticChecker extends ASTVisitor
         {
             if (now.obj.is_left_val == false)
                 throw new SemanticError(now.pos, "obj is not left val");
-            now.tobe_left_val = true;
+            now.is_left_val = true;
         }
         now.type = now.obj.type;
         now.dim = now.obj.dim;
@@ -380,6 +403,14 @@ public class SemanticChecker extends ASTVisitor
 
             ClassDefNode cls = symbols.get_type(now.s);
 
+            if (var != null && func != null)
+            {
+                if (cmp(var.pos, now_class.pos))
+                    var = null;
+                else
+                    func = null;
+            }
+
             if (var != null)
             {
                 now.type = var.type;
@@ -409,7 +440,6 @@ public class SemanticChecker extends ASTVisitor
             if (now_class == null)
                 throw new SemanticError(now.pos, "unable to use This outside a class");
             now.type = now_class.idt;
-            now.is_left_val = true;
         }
         else if (now.cate == 4 || now.cate == 5)
             now.type = "bool";
@@ -477,6 +507,8 @@ public class SemanticChecker extends ASTVisitor
     public void visit(IfStNode now)
     {
         now.cond.accept(this);
+        if (!now.cond.type.equals("bool"))
+            throw new SemanticError(now.cond.pos, "If condition should be of boolean type");
         now_scope = new Scope(now_scope);
         now.true_st.accept(this);
         now_scope = now_scope.fa_scope;
