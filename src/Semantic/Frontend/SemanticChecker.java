@@ -91,7 +91,7 @@ public class SemanticChecker extends ASTVisitor
             {
                 if (now_class != null && now_func().idt.equals(now_class.idt))
                     throw new SemanticError(now.pos, "cannot return any value in a constructor");
-                now.expr.accept(this);
+                // now.expr.accept(this);
                 if (!now.expr.type.equals("null") && !now.expr.type.equals(now_func().return_type))
                     throw new SemanticError(now.pos, "return type not match");
                 if (now.expr.dim != now_func().dim)
