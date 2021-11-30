@@ -1,3 +1,40 @@
+## 思路
+
+优化：
+
+只要不 new 就不用 alloca 申请栈空间，而是直接使用虚拟寄存器，省去一大部分的 load 和 store，充分使用空闲寄存器
+
+但是为了满足 SSA，需要利用 phi 正确合并控制流
+
+经过思考得出了以下的虚拟寄存器分配算法：
+
+### 虚拟寄存器分配
+
+1. AST 里给每个 Scope 一个独一无二的编号 `scope_num`，使得每个变量 `var` 生成一个 `<scope_num, var_name>` 的二元组，唯一确定一个变量
+2. 每个 basic block 开一个 `Map< <scope_num, var_name>, vector<reg_num_offset, lable_name> >`，保存每一个变量的**所有来源的** `<虚拟寄存器编号, basic block 名>` 二元组，使得若 vector 大小超过 1，则这个变量需要 phi，且之后的是所有需要 phi 到这个新增虚拟寄存器的 `<reg_name_offset, lable_name>` 二元组。
+
+第一次 Pass：
+
+1. 每个 basic block 用一个计数器记录当前 basic block 新增了多少个虚拟寄存器 (`offset`)
+2. 每次赋值操作时，左边使用新的虚拟寄存器 (`offset += 1`)，右边使用 map 里查找到的寄存器编号，把被赋值的变量寄存器改成新的
+3. 每次进行 jump 的时候，把当前 basic block 的 Map 深拷贝给要跳转到的 basic block 的 Map，`lable_name` 为当前 `basic block` 的 lable_name。如果某个位置已经有值，那么新建虚拟内存器(`new_reg++`)，把这个 `<reg_num, lable_name>` 二元组塞进 vector
+
+
+第二次 Pass：
+
+经过第一次 Pass 后，知道了每个 basic block 有哪些 var 是需要 phi 的
+
+由此通过第二次 Pass 得到每个 basic block (label) 开头可用的虚拟寄存器编号
+
+第三次 Pass：
+
+得到 phi 的所有虚拟寄存器来源的真正虚拟寄存器编号，通过 label 的初始编号 + offset 得到
+
+Scope 里记录每一个 var_name 使用的最后一个寄存器编号
+
+
+
+
 ## LLVM IR
 
 ### 命令
