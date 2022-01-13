@@ -1,6 +1,5 @@
-package Semantic.Grammar;
 // Generated from Mxstar.g4 by ANTLR 4.9.2
-
+package Semantic.Grammar;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;

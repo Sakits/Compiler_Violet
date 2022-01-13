@@ -8,6 +8,7 @@ import Utils.position;
 public class NvarExprNode extends ExprNode
 {
     public ArrayList<ExprNode> expr = new ArrayList<>();
+    public ClassDefNode cls = null;
 
     public NvarExprNode(position pos, String type, int dim)
     {

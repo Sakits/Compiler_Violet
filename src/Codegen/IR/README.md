@@ -38,11 +38,11 @@ Scope 里记录每一个 var_name 使用的最后一个寄存器编号
 ## LLVM IR
 
 ### 命令
-`clang -S -emit-llvm test.c` 生成 LLVM IR
+`clang -emit-llvm -S test.c -o test.ll --target=riscv32` 生成 LLVM IR
 
 `opt test.ll -S --O3` 或 `clang -S -emit-llvm -O3 test.c` O3 优化
 
-`llc test.ll` LLVM IR 生成 Assembly Code
+`llc test.ll -o test.s -march=riscv32` LLVM IR 生成 Assembly Code
 
 `clang main.ll -o main` LLVM IR 生成可执行文件
 

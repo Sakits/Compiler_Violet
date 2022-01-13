@@ -7,6 +7,7 @@ public class ObjExprNode extends ExprNode
 {
     public ExprNode obj;
     public String idt;
+    public OneVarDefNode defnode = null;
 
     public ObjExprNode(position pos, ExprNode obj, String idt)
     {

@@ -7,6 +7,7 @@ public class PrimaryExprNode extends ExprNode
 {
     public int cate;
     public String s;
+    public OneVarDefNode defnode = null;
 
     public PrimaryExprNode(position pos, int cate, String s)
     {

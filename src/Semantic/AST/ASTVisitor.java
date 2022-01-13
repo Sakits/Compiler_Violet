@@ -7,7 +7,7 @@ public class ASTVisitor
     public void visit(AddrExprNode now) {}
     public void visit(AssignExprNode now) {}
     public void visit(BinaryExprNode now) {}
-    public void visit(BraExprNode now) {}
+    public void visit(BracketExprNode now) {}
     public void visit(BreakStNode now) {}
     public void visit(CallExprNode now) {}
     public void visit(ClassDefNode now) {}

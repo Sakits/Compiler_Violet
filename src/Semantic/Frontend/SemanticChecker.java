@@ -78,6 +78,12 @@ public class SemanticChecker extends ASTVisitor
                 throw new SemanticError(now.pos, "function " + now.idt + " has no return");
         }
 
+        // IR
+        now.is_returned = false;
+        now.belong = now_class;
+        if (now_class != null && now_class.idt.equals(now_func().idt))
+            now_class.cons = now;
+
         now_func.remove(now_func.size() - 1);
         now_scope = now_scope.fa_scope;
     }
@@ -153,6 +159,11 @@ public class SemanticChecker extends ASTVisitor
             now.init_val.accept(this);
         
         now_scope.add_var(now.idt, now);
+        if (now_class != null)
+        {
+            now.belong = now_class;
+            now.offset = now_class.now_offset++;
+        }
     }
 
     public void visit(SuiteNode now)
@@ -164,22 +175,22 @@ public class SemanticChecker extends ASTVisitor
 
     public void visit(AddrExprNode now)
     {
-        now.ptr.accept(this);
-        if (now.ptr.is_left_val == false)
-            if (now.ptr.is_class != null || (now.ptr.is_left_val == false && now.ptr.is_func != null))
-              throw new SemanticError(now.ptr.pos, "func or class can't use []");
-        if (now.ptr.tobe_left_val)
-            throw new SemanticError(now.ptr.pos, "new can't use []");
-        if (now.ptr.dim == 0)
-            throw new SemanticError(now.ptr.pos, "ptr have no dimension");
+        now.obj.accept(this);
+        if (now.obj.is_left_val == false)
+            if (now.obj.is_class != null || (now.obj.is_left_val == false && now.obj.is_func != null))
+              throw new SemanticError(now.obj.pos, "func or class can't use []");
+        if (now.obj.tobe_left_val)
+            throw new SemanticError(now.obj.pos, "new can't use []");
+        if (now.obj.dim == 0)
+            throw new SemanticError(now.obj.pos, "ptr have no dimension");
 
         now.offset.accept(this);
         if (!now.offset.type.equals("int") || now.offset.dim != 0)
-            throw new SemanticError(now.ptr.pos, "Wrong offset type");
+            throw new SemanticError(now.obj.pos, "Wrong offset type");
 
-        now.type = now.ptr.type;
-        now.dim = now.ptr.dim - 1;
-        now.is_left_val = now.ptr.is_left_val;
+        now.type = now.obj.type;
+        now.dim = now.obj.dim - 1;
+        now.is_left_val = now.obj.is_left_val;
     }
 
     public void visit(AssignExprNode now)
@@ -266,7 +277,7 @@ public class SemanticChecker extends ASTVisitor
         }
     }
 
-    public void visit(BraExprNode now)
+    public void visit(BracketExprNode now)
     {
         now.expr.accept(this);
 
@@ -298,6 +309,8 @@ public class SemanticChecker extends ASTVisitor
         if (func.var.size() != now.para.size())
             throw new SemanticError(now.pos, "para number not match");
 
+        now.func = func;
+
         now.para.forEach(i -> i.accept(this));
         for (var i = 0; i < func.var.size(); i++)
         {
@@ -326,7 +339,8 @@ public class SemanticChecker extends ASTVisitor
 
     public void visit(NvarExprNode now)
     {
-        if (symbols.get_type(now.type) == null)
+        now.cls = symbols.get_type(now.type);
+        if (now.cls == null)
             throw new SemanticError(now.pos, "no such type " + now.type);
 
         for (var i : now.expr)
@@ -351,8 +365,9 @@ public class SemanticChecker extends ASTVisitor
         {
             if (cls.vars.containsKey(now.idt))
             {
-                now.type = cls.vars.get(now.idt).type;
-                now.dim = cls.vars.get(now.idt).dim;
+                now.defnode = cls.vars.get(now.idt);
+                now.type = now.defnode.type;
+                now.dim = now.defnode.dim;
                 now.is_left_val = true;
             }
             else if (cls.funcs.containsKey(now.idt))
@@ -380,6 +395,8 @@ public class SemanticChecker extends ASTVisitor
         if (!now.obj.type.equals("int") && !now.obj.type.equals("bool"))
             throw new SemanticError(now.pos, "prefixexpr Wrong type");
         if (!now.op.equals("!") && !now.obj.type.equals("int"))
+            throw new SemanticError(now.pos, "prefixexpr Wrong type");
+        if (now.op.equals("!") && !now.obj.type.equals("bool"))
             throw new SemanticError(now.pos, "prefixexpr Wrong type");
 
         if (now.op.equals("++") || now.op.equals("--"))
@@ -427,6 +444,8 @@ public class SemanticChecker extends ASTVisitor
                 else if (var2 != null && cmp(var.pos, now_class.pos))
                     var = var2;
             }
+
+            now.defnode = var;
             
             FuncDefNode func = symbols.get_func(now.s);
             if (now_class != null && now_class.funcs.containsKey(now.s))

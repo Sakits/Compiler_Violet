@@ -272,7 +272,7 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode>
 
     @Override public ASTNode visitExprinTag(MxstarParser.ExprinTagContext ctx)
     {
-        BraExprNode now = new BraExprNode(new position(ctx), (ExprNode) visit(ctx.expression()));
+        BracketExprNode now = new BracketExprNode(new position(ctx), (ExprNode) visit(ctx.expression()));
 
         return now;
     }

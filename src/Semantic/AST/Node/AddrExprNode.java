@@ -5,12 +5,12 @@ import Utils.position;
 
 public class AddrExprNode extends ExprNode
 {
-    public ExprNode ptr, offset;
+    public ExprNode obj, offset;
 
-    public AddrExprNode(position pos, ExprNode ptr, ExprNode offset)
+    public AddrExprNode(position pos, ExprNode obj, ExprNode offset)
     {
         super(pos);
-        this.ptr = ptr;
+        this.obj = obj;
         this.offset = offset;
     }
 

@@ -13,6 +13,8 @@ public class ClassDefNode extends ASTNode
     public ArrayList<VarDefNode> var = new ArrayList<>();
     public HashMap<String, FuncDefNode> funcs = new HashMap<>();
     public HashMap<String, OneVarDefNode> vars = new HashMap<>();
+    public Integer now_offset = 0;
+    public FuncDefNode cons = null;
 
     public ClassDefNode(position pos, String idt)
     {

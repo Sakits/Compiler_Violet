@@ -6,3 +6,8 @@ testcases
 tools
 
 /**/*.class
+/**/tmp.md
+
+test.mx
+test.ll
+test

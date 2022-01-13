@@ -27,7 +27,6 @@ public class SymbolCollector extends ASTVisitor
 
         ClassDefNode Str = new ClassDefNode(new position(), "string");
 
-
         Str.func.add(new FuncDefNode(new position(), 0, "int", "length", null, true));
 
         FuncDefNode substring = new FuncDefNode(new position(), 0, "string", "substring", null, true);
