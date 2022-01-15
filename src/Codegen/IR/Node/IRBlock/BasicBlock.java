@@ -2,7 +2,6 @@ package Codegen.IR.Node.IRBlock;
 
 import java.util.ArrayList;
 
-import Codegen.IR.IRVisitor;
 import Codegen.IR.Node.IRStat.IRStat;
 
 public class BasicBlock 
@@ -21,8 +20,4 @@ public class BasicBlock
         return this.tag + ":";
     }
 
-    public void accept(IRVisitor visitor)
-    {
-        visitor.visit(this);
-    }
 }

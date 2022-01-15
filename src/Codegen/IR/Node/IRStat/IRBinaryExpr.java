@@ -1,6 +1,5 @@
 package Codegen.IR.Node.IRStat;
 
-import Codegen.IR.IRVisitor;
 import Codegen.IR.Node.IRValue.IRValue;
 
 public class IRBinaryExpr extends IRStat
@@ -24,10 +23,5 @@ public class IRBinaryExpr extends IRStat
         return dest.toString() + " = " 
              + op.toString() + " " + this.lhs.type.toString() + " "
              + this.lhs.toString() + ", " + this.rhs.toString();
-    }
-
-    public void accept(IRVisitor visitor)
-    {
-        visitor.visit(this);
     }
 }

@@ -1,7 +1,5 @@
 package Codegen.IR.Node.IRStat;
 
-import org.antlr.runtime.tree.TreeWizard.Visitor;
-
 import Codegen.IR.Node.IRBlock.BasicBlock;
 import Codegen.IR.Node.IRValue.IRValue;
 
@@ -18,15 +16,10 @@ public class IRBranch extends IRStat
         this.false_block = false_block;
     }
 
-    public String toString()
+    @Override public String toString()
     {
         return "br i1 " + this.cond.toString() + ", "
-             + "lable %" + this.true_block.tag + ", "
-             + "lable %" + this.false_block.tag;
-    }
-
-    public void accept(Visitor visitor)
-    {
-        visitor.visit(this);
+             + "label %" + this.true_block.tag + ", "
+             + "label %" + this.false_block.tag;
     }
 }

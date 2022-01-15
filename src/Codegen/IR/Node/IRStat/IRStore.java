@@ -1,6 +1,6 @@
 package Codegen.IR.Node.IRStat;
 
-import Codegen.IR.IRVisitor;
+import Codegen.IR.Node.IRType.IRPointer;
 import Codegen.IR.Node.IRValue.IRValue;
 
 public class IRStore extends IRStat
@@ -16,12 +16,10 @@ public class IRStore extends IRStat
 
     public String toString()
     {
-        return "store " + val.type.toString() + " " + val.toString() + ", "
+        IRPointer type = (IRPointer)ptr.type;
+        type = new IRPointer(type.dim - 1, type.basic_type);
+        return "store " + type.toString() + " " + val.toString() + ", "
              + ptr.type.toString() + " " + ptr.toString();
     }
     
-    public void accept(IRVisitor visitor)
-    {
-        visitor.visit(this);
-    }
 }

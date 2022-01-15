@@ -107,6 +107,8 @@ public class SymbolCollector extends ASTVisitor
         }
         else
         {
+            now.belong = now_class;
+            
             if (now.idt.equals("main"))
                 throw new SemanticError(now.pos, "Duplicated name for main");
 

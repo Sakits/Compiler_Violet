@@ -8,9 +8,8 @@ import java.io.PrintWriter;
 import Codegen.IR.Node.IRBlock.BasicBlock;
 import Codegen.IR.Node.IRBlock.Function;
 import Codegen.IR.Node.IRBlock.IRGlobal;
-import Codegen.IR.Node.IRStat.*;
 
-public class IRPrinter implements IRVisitor
+public class IRPrinter
 {
     public OutputStream fout;
     public PrintWriter printer;
@@ -57,7 +56,7 @@ public class IRPrinter implements IRVisitor
         });
         global.funcs.forEach(i -> {
             if (!i.is_builtin)
-                i.accept(this);
+                visit(i);
         });
     }
 
@@ -66,7 +65,7 @@ public class IRPrinter implements IRVisitor
         printer.println(func.declare(false));
         printer.println("{");
 
-        func.blocks.forEach(i -> i.accept(this));
+        func.blocks.forEach(i -> visit(i));
 
         printer.println("}");
     }
@@ -74,61 +73,9 @@ public class IRPrinter implements IRVisitor
     public void visit(BasicBlock block)
     {
         printer.println(block.toString());
-        block.irst.forEach(i -> i.accept(this));
-    }
-
-    public void visit(IRStat now){}
-
-    public void visit(IRAlloca now)
-    {
-        printer.println("\t" + now.toString());
-    }
-    public void visit(IRBinaryExpr now)
-    {
-        printer.println("\t" + now.toString());
-    }
-    public void visit(IRBitcast now)
-    {
-        printer.println("\t" + now.toString());
-    }
-    public void visit(IRBranch now)
-    {
-        printer.println("\t" + now.toString());
-    }
-    public void visit(IRCall now)
-    {
-        printer.println("\t" + now.toString());
-    }
-    public void visit(IRCmp now)
-    {
-        printer.println("\t" + now.toString());
-    }
-    public void visit(IRGetelementptr now)
-    {
-        printer.println("\t" + now.toString());
-    }
-    public void visit(IRJump now)
-    {
-        printer.println("\t" + now.toString());
-    }
-    public void visit(IRLoad now)
-    {
-        printer.println("\t" + now.toString());
-    }
-    public void visit(IRMalloc now)
-    {
-        printer.println("\t" + now.toString());
-    }
-    public void visit(IRPhi now)
-    {
-        printer.println("\t" + now.toString());
-    }
-    public void visit(IRRet now)
-    {
-        printer.println("\t" + now.toString());
-    }
-    public void visit(IRStore now)
-    {
-        printer.println("\t" + now.toString());
+        block.irst.forEach(i -> {
+            // System.out.println(i.toString());
+            printer.println("\t" + i.toString());
+        });
     }
 }

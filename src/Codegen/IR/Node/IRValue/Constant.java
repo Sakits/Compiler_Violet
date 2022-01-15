@@ -1,5 +1,6 @@
 package Codegen.IR.Node.IRValue;
 
+import Codegen.IR.Node.IRType.IRPointer;
 import Codegen.IR.Node.IRType.IRType;
 
 public class Constant extends IRValue
@@ -14,6 +15,8 @@ public class Constant extends IRValue
 
     @Override public String toString() 
     {
-        return type.size != 0 ? Integer.toString(val) : "";
+        if (type instanceof IRPointer) return "null";
+        if (type.name.equals("void")) return "";
+        return Integer.toString(val);
     }
 }

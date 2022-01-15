@@ -1,6 +1,5 @@
 package Codegen.IR.Node.IRStat;
 
-import Codegen.IR.IRVisitor;
 import Codegen.IR.Node.IRType.IRType;
 import Codegen.IR.Node.IRValue.IRValue;
 
@@ -14,8 +13,8 @@ public class IRBitcast extends IRStat
         super();
         this.dest = dest;
         this.val = val;
-        this.from = dest.type;
-        this.to = val.type;
+        this.from = val.type;
+        this.to = dest.type;
     }
 
     @Override public String toString()
@@ -24,10 +23,5 @@ public class IRBitcast extends IRStat
              + this.from.toString() + " "
              + this.val.toString() + " to "
              + this.to.toString();
-    }
-
-    public void accept(IRVisitor visitor)
-    {
-        visitor.visit(this);
     }
 }

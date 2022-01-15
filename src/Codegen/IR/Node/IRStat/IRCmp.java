@@ -1,6 +1,5 @@
 package Codegen.IR.Node.IRStat;
 
-import Codegen.IR.IRVisitor;
 import Codegen.IR.Node.IRValue.IRValue;
 
 public class IRCmp extends IRStat
@@ -20,15 +19,10 @@ public class IRCmp extends IRStat
 
     public String toString()
     {
-        return dest.toString() + " = icmp " + op.toString() + " "
+        return dest.toString() + " = icmp "
              + op.toString() + " "
              + lhs.type.toString() + " "
              + lhs.toString() + ", "
              + rhs.toString();
-    }
-
-    public void accept(IRVisitor visitor)
-    {
-        visitor.visit(this);
     }
 }

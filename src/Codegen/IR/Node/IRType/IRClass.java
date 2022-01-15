@@ -19,13 +19,18 @@ public class IRClass extends IRType
         return sum;
     }
 
+    public String toString()
+    {
+        return "%" + name;
+    }
+
     public String declare()
     {
         String s = toString();
         s += " = type { ";
         for (int i = 0; i < vars.size(); i++)
             s += vars.get(i).toString() + ((i != vars.size() - 1) ? ", " : "");
-        s += "}";
+        s += " }";
         return s;
     }
 }

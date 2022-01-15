@@ -100,7 +100,7 @@ public class SemanticChecker extends ASTVisitor
                 // now.expr.accept(this);
                 if (!now.expr.type.equals("null") && !now.expr.type.equals(now_func().return_type))
                     throw new SemanticError(now.pos, "return type not match");
-                if (now.expr.dim != now_func().dim)
+                if (!now.expr.type.equals("null") && now.expr.dim != now_func().dim)
                     throw new SemanticError(now.pos, "return dimension not match");
             }
             else

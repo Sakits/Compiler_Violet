@@ -25,6 +25,7 @@ import Codegen.IR.Node.IRType.IRChar;
 import Codegen.IR.Node.IRType.IRClass;
 import Codegen.IR.Node.IRType.IRInt;
 import Codegen.IR.Node.IRType.IRPointer;
+import Codegen.IR.Node.IRType.IRStr;
 import Codegen.IR.Node.IRType.IRType;
 import Codegen.IR.Node.IRType.IRVoid;
 import Codegen.IR.Node.IRValue.ConstString;
@@ -38,14 +39,14 @@ public class IRBuilder extends ASTVisitor
 {
     public BasicBlock now_block = null;
     public Function now_func = null;
-    public IRType now_class = null;
+    public IRClass now_class = null;
     public HashMap<String, IRType> types = new HashMap<>();
     public HashMap<String, Function> funcs = new HashMap<>();
     public IRGlobal global;
     public HashMap<String, ConstString> const_string = new HashMap<>();
     public Stack<BasicBlock> break_to = new Stack<>();
     public Stack<BasicBlock> continue_to = new Stack<>();
-    public int reg_cnt = 0;
+    public int reg_cnt = 0, str_cnt = 0;
     
     public IRBuilder()
     {
@@ -56,7 +57,12 @@ public class IRBuilder extends ASTVisitor
     {
         String func_name = "";
         if (now.belong != null)
-            func_name = now.belong.idt + ".";
+        {
+            if (!now.belong.idt.equals("string"))
+                func_name = now.belong.idt + ".";
+            else
+                func_name = "__builtin_";
+        }
         func_name += now.idt;
         return func_name;
     }
@@ -66,26 +72,42 @@ public class IRBuilder extends ASTVisitor
         Function print = new Function(types.get("void"), "__builtin_print");
         print.para.add(new Register(types.get("string"), false, "s", 0));
         print.is_builtin = true;
-        funcs.put(print.name, print);
+        funcs.put("print", print);
         global.funcs.add(print);
 
         Function println = new Function(types.get("void"), "__builtin_println");
         println.para.add(new Register(types.get("string"), false, "s", 0));
         println.is_builtin = true;
-        funcs.put(println.name, println);
+        funcs.put("println", println);
         global.funcs.add(println);
 
         Function printInt = new Function(types.get("void"), "__builtin_printInt");
         printInt.para.add(new Register(types.get("int"), false, "int", 0));
         printInt.is_builtin = true;
-        funcs.put(printInt.name, printInt);
+        funcs.put("printInt", printInt);
         global.funcs.add(printInt);
 
         Function printlnInt = new Function(types.get("void"), "__builtin_printlnInt");
         printlnInt.para.add(new Register(types.get("int"), false, "int", 0));
         printlnInt.is_builtin = true;
-        funcs.put(printlnInt.name, printlnInt);
+        funcs.put("printlnInt", printlnInt);
         global.funcs.add(printlnInt);
+
+        Function getInt = new Function(types.get("int"), "__builtin_getInt");
+        getInt.is_builtin = true;
+        funcs.put("getInt", getInt);
+        global.funcs.add(getInt);
+
+        Function getString = new Function(types.get("string"), "__builtin_getString");
+        getString.is_builtin = true;
+        funcs.put("getString", getString);
+        global.funcs.add(getString);
+
+        Function toString = new Function(types.get("string"), "__builtin_toString");
+        toString.para.add(new Register(types.get("int"), false, "x", 0));
+        toString.is_builtin = true;
+        funcs.put("toString", toString);
+        global.funcs.add(toString);
         
         Function malloc = new Function(types.get("string"), "__builtin_malloc");
         malloc.para.add(new Register(types.get("int"), false, "size", 0));
@@ -142,13 +164,13 @@ public class IRBuilder extends ASTVisitor
         funcs.put(str_le.name, str_le);
         global.funcs.add(str_le);
         
-        Function str_len = new Function(types.get("string"), "string.length");
+        Function str_len = new Function(types.get("int"), "__builtin_length");
         str_len.para.add(new Register(types.get("string"), false, "this", 0));
         str_len.is_builtin = true;
         funcs.put(str_len.name, str_len);
         global.funcs.add(str_len);
 
-        Function str_substring = new Function(types.get("string"), "string.substring");
+        Function str_substring = new Function(types.get("string"), "__builtin_substring");
         str_substring.para.add(new Register(types.get("string"), false, "this", 0));
         str_substring.para.add(new Register(types.get("int"), false, "left", 1));
         str_substring.para.add(new Register(types.get("int"), false, "right", 2));
@@ -156,93 +178,120 @@ public class IRBuilder extends ASTVisitor
         funcs.put(str_substring.name, str_substring);
         global.funcs.add(str_substring);
 
-        Function str_parseInt = new Function(types.get("int"), "string.parseInt");
+        Function str_parseInt = new Function(types.get("int"), "__builtin_parseInt");
         str_parseInt.para.add(new Register(types.get("string"), false, "this", 0));
         str_parseInt.is_builtin = true;
         funcs.put(str_parseInt.name, str_parseInt);
         global.funcs.add(str_parseInt);
 
-        Function str_ord = new Function(types.get("int"), "string.ord");
+        Function str_ord = new Function(types.get("int"), "__builtin_ord");
         str_ord.para.add(new Register(types.get("string"), false, "this", 0));
         str_ord.para.add(new Register(types.get("int"), false, "pos", 1));
         str_ord.is_builtin = true;
         funcs.put(str_ord.name, str_ord);
         global.funcs.add(str_ord);
+
+        Function init_func = new Function(types.get("void"), "__builtin_init");
+        funcs.put("__builtin_init", init_func);
+        global.funcs.add(init_func);
     }
 
     public void visit(RootNode now)
     {
-        types.put("null", new IRVoid());
         types.put("void", new IRVoid());
+        types.put("null", new IRPointer(1, new IRVoid()));
         types.put("bool", new IRBool());
         types.put("int", new IRInt());
         types.put("string", new IRPointer(1, new IRChar()));
         now.cls.forEach(i -> {
             IRClass new_class = new IRClass(i.idt);
-            types.put(i.idt, new_class);
+            IRPointer class_ptr = new IRPointer(1, new_class);
+            types.put(i.idt, class_ptr);
             global.classes.add(new_class);
         });
 
         now.cls.forEach(i -> {
-            IRClass now_class = (IRClass) types.get(i.idt);
-            i.var.forEach(j -> now_class.vars.add(new IRPointer(1, types.get(j.type))));
+            IRClass now_class = (IRClass) ((IRPointer) types.get(i.idt)).basic_type;
+            i.var.forEach(j -> {
+                IRType type = types.get(j.type);
+                if (j.dim != 0)
+                    type = new IRPointer(j.dim, type);
+                now_class.vars.add(type);
+            });
         });
 
         get_builtin_func();
 
+        now.cls.forEach(i -> {
+            i.func.forEach(j -> {
+                IRType func_type = types.get(j.return_type);
+                if (j.dim != 0)
+                    func_type = new IRPointer(j.dim, func_type);
+                String func_name = get_func_name(j);
+                Function new_func = new Function(func_type, func_name);
+                new_func.thisptr = new Register(types.get(i.idt), false, "this_ptr", reg_cnt++);
+                funcs.put(func_name, new_func);
+                global.funcs.add(new_func);
+            });
+        });
+
         now.func.forEach(i -> {
             IRType func_type = types.get(i.return_type);
+            if (i.dim != 0)
+                func_type = new IRPointer(i.dim, func_type);
             String func_name = get_func_name(i);
             Function new_func = new Function(func_type, func_name);
             funcs.put(func_name, new_func);
             global.funcs.add(new_func);
         });
 
-        // Function init_func = new Function(types.get("void"), "__builtin_init");
-        // funcs.put("__builtin_init", init_func);
-        // now_func = init_func;
-        // now_block = new BasicBlock(init_func.name);
-        // now_func.blocks.add(now_block);
-        // global.funcs.add(init_func);
-
+        now_func = funcs.get("__builtin_init");
+        now_block = new BasicBlock(now_func.name + "_" + now_func.blocks.size());
+        now_func.blocks.add(now_block);
+        
         now.var.forEach(i -> i.accept(this));
+        
+        now_func.init_block.irst.add(new IRJump(now_func.blocks.get(1)));
+        now_block.irst.add(new IRRet(new Constant(now_func.return_type, 0)));
+        
         now.cls.forEach(i -> i.accept(this));
         now.func.forEach(i -> i.accept(this));
     }
 
     public void visit(ClassDefNode now)
     {
-        now_class = types.get(now.idt);
+        now_class = (IRClass) ((IRPointer) types.get(now.idt)).basic_type;
         now.func.forEach(i -> i.accept(this));
         now_class = null;
     }
 
     public void visit(FuncDefNode now)
     {
-        reg_cnt = 0;
         now_func = funcs.get(get_func_name(now));
-        now_block = now_func.init_block;
+        now_block = new BasicBlock(now_func.name + "_" + now_func.blocks.size());
+        now_func.blocks.add(now_block);
+
+        if (now.idt.equals("main"))
+        {
+            now_block.irst.add(new IRCall(null, funcs.get("__builtin_init")));
+        }
+
+        if (now_class != null)
+            now_func.para.add(now_func.thisptr);
+
+        now.var.forEach(i -> {
+            i.accept(this);
+            now_func.para.add(i.val);
+        });
 
         if (now.st != null)
             now.st.accept(this);
         
         if (now_block.is_returned == false)
-            now_block.irst.add(new IRRet(new Constant(types.get(now.return_type), 0)));
+            now_block.irst.add(new IRRet(new Constant(now_func.return_type, 0)));
 
-        if (now_class != null)
-        {
-            now_func.thisptr = new Register(new IRPointer(1, now_class), false, "this_ptr", reg_cnt++);
-            now_func.init_block.irst.add(new IRAlloca(now_func.thisptr, now_class));
-            now_func.para.add(now_func.thisptr);
-        }
 
-        now.var.forEach(i -> {
-            i.accept(this);
-            now_func.para.add(i.one_var.ptr);
-        });
-
-        now.var.forEach(i -> i.accept(this));  
-
+        now_func.init_block.irst.add(new IRJump(now_func.blocks.get(1)));
         now_block = null;
         now_func = null;
     }
@@ -253,6 +302,7 @@ public class IRBuilder extends ASTVisitor
         if (now.expr != null)
         {
             now.expr.accept(this);
+            now.expr.val.type = now_func.return_type;
             now_block.irst.add(new IRRet(now.expr.val));
         }
         else
@@ -264,7 +314,16 @@ public class IRBuilder extends ASTVisitor
 
     public void visit(FuncVarDefNode now)
     {
-        now.one_var.accept(this);
+        IRType type = types.get(now.one_var.type);
+        if (now.dim != 0)
+            type = new IRPointer(now.dim, type);
+
+        now.val = new Register(type, false, now.one_var.idt + "_val", reg_cnt++);
+        now.ptr = new Register(new IRPointer(1, type), false, now.one_var.idt + "_ptr", reg_cnt++);
+        now_func.init_block.irst.add(new IRAlloca(now.ptr, type));
+        now_block.irst.add(new IRStore(now.ptr, now.val));
+
+        now.one_var.ptr = now.ptr;
     }
 
     public void visit(VarDefNode now)
@@ -275,28 +334,40 @@ public class IRBuilder extends ASTVisitor
     public void visit(OneVarDefNode now)
     {
         IRType now_type = types.get(now.type);
+        if (now.dim != 0)
+            now_type = new IRPointer(now.dim, now_type);
 
-        Constant init_val;
+        IRValue init_val = null;
         if (now.init_val != null)
         {
             now.init_val.accept(this);
-            assert now.init_val.val instanceof Constant;
-            init_val = (Constant) now.init_val.val;
+            init_val = now.init_val.val;
         }
-        else
-            init_val = new Constant(now_type, 0);
 
-        if (now_func == null && now.belong == null)
+        if (now_func.name.equals("__builtin_init"))
         {
-            now.ptr = new Register(new IRPointer(1, now_type), true, now.idt, reg_cnt);
-            now.ptr.init_val = init_val;
+            now.ptr = new Register(new IRPointer(1, now_type), true, now.idt, reg_cnt++);
+            if (init_val != null)
+            {
+                if (init_val instanceof Constant)
+                    now.ptr.init_val = (Constant) init_val;
+                else
+                {
+                    now.ptr.init_val = new Constant(now_type, 0);
+                    now_block.irst.add(new IRStore(now.ptr, init_val));
+                }
+            }
+            else
+                now.ptr.init_val = new Constant(now_type, 0);
+
             global.vars.add(now.ptr);
         }
         else if (now_func != null)
         {
             now.ptr = new Register(new IRPointer(1, now_type), false, now.idt, reg_cnt++);
             now_func.init_block.irst.add(new IRAlloca(now.ptr, now_type));
-            now_block.irst.add(new IRStore(now.ptr, init_val));
+            if (init_val != null)
+                now_block.irst.add(new IRStore(now.ptr, init_val));
         }
     }
 
@@ -312,13 +383,13 @@ public class IRBuilder extends ASTVisitor
 
         IRType type = types.get(now.type);
 
-        now.ptr = new Register(new IRPointer(now.dim, type), false, "now_ptr", reg_cnt++);
+        now.ptr = new Register(new IRPointer(now.dim + 1, type), false, "now_ptr", reg_cnt++);
         now_block.irst.add(new IRGetelementptr(now.ptr, now.obj.val, now.offset.val, false));
 
-        if (now.dim == 1)
+        if (now.dim == 0)
             now.val = new Register(type, false, "now_val_last", reg_cnt++);
         else
-            now.val = new Register(new IRPointer(now.dim - 1, type), false, "now_val_mid", reg_cnt++);
+            now.val = new Register(new IRPointer(now.dim, type), false, "now_val_mid", reg_cnt++);
         now_block.irst.add(new IRLoad(now.val, now.ptr));
     }
 
@@ -335,14 +406,16 @@ public class IRBuilder extends ASTVisitor
     {
         boolean flag = now.op.equals("||") || now.op.equals("&&");
         IRType type = types.get(now.type);
-        IRValue lval = now.lhs.val, rval = now.rhs.val;
+        if (now.dim != 0)
+            type = new IRPointer(now.dim, type);
         
         if (!flag)
         {
             now.lhs.accept(this);
             now.rhs.accept(this);
+            IRValue lval = now.lhs.val, rval = now.rhs.val;
             IRType str = types.get("string");
-            IRType null_type = types.get("null");
+            // IRType null_type = types.get("null");
             binary_op_type op = null;
             cmp_op_type cop = null;
             
@@ -414,7 +487,7 @@ public class IRBuilder extends ASTVisitor
                     break;
 
                 case "<<" :
-                    op = binary_op_type.srem;
+                    op = binary_op_type.shl;
                     if (lval instanceof Constant && rval instanceof Constant)
                         now.val = new Constant(type, ((Constant)lval).val << ((Constant)rval).val);
                     else
@@ -425,7 +498,7 @@ public class IRBuilder extends ASTVisitor
                     break;
 
                 case ">>" :
-                    op = binary_op_type.srem;
+                    op = binary_op_type.ashr;
                     if (lval instanceof Constant && rval instanceof Constant)
                         now.val = new Constant(type, ((Constant)lval).val >> ((Constant)rval).val);
                     else
@@ -435,8 +508,19 @@ public class IRBuilder extends ASTVisitor
                     }
                     break;
 
+                case "&":
+                    op = binary_op_type.and;
+                    if (lval instanceof Constant && rval instanceof Constant)
+                        now.val = new Constant(type, ((Constant)lval).val & ((Constant)rval).val);
+                    else
+                    {
+                        now.val = new Register(type, false, "and_int", reg_cnt++);
+                        now_block.irst.add(new IRBinaryExpr(now.val, op, lval, rval));
+                    }
+                    break;
+
                 case "|" :
-                    op = binary_op_type.srem;
+                    op = binary_op_type.or;
                     if (lval instanceof Constant && rval instanceof Constant)
                         now.val = new Constant(type, ((Constant)lval).val | ((Constant)rval).val);
                     else
@@ -447,7 +531,7 @@ public class IRBuilder extends ASTVisitor
                     break;
 
                 case "^" :
-                    op = binary_op_type.srem;
+                    op = binary_op_type.xor;
                     if (lval instanceof Constant && rval instanceof Constant)
                         now.val = new Constant(type, ((Constant)lval).val ^ ((Constant)rval).val);
                     else
@@ -459,9 +543,7 @@ public class IRBuilder extends ASTVisitor
                 
                 case "==" :
                     cop = cmp_op_type.eq;
-                    if (lval.type.equals(null_type) || rval.type.equals(null_type))
-                        now.val = new Constant(type, (lval.type.equals(null_type) && rval.type.equals(null_type)) ? 1 : 0);
-                    else if (lval instanceof Constant && rval instanceof Constant)
+                    if (lval instanceof Constant && rval instanceof Constant)
                         now.val = new Constant(type, ((Constant)lval).val == ((Constant)rval).val ? 1 : 0);
                     else if (lval.type.equals(str))
                     {
@@ -481,9 +563,7 @@ public class IRBuilder extends ASTVisitor
 
                 case "!=" :
                     cop = cmp_op_type.ne;
-                    if (lval.type.equals(null_type) || rval.type.equals(null_type))
-                        now.val = new Constant(type, (lval.type != null_type || rval.type != null_type) ? 1 : 0);
-                    else if (lval instanceof Constant && rval instanceof Constant)
+                    if (lval instanceof Constant && rval instanceof Constant)
                         now.val = new Constant(type, ((Constant)lval).val != ((Constant)rval).val ? 1 : 0);
                     else if (lval.type.equals(str))
                     {
@@ -584,13 +664,13 @@ public class IRBuilder extends ASTVisitor
         }
         else
         {
+            now.lhs.accept(this);
             BasicBlock lhs_block = now_block;
             BasicBlock rhs_block = new BasicBlock(now_func.name + "_" + now_func.blocks.size());
             now_func.blocks.add(rhs_block);
             BasicBlock next_block = new BasicBlock(now_func.name + "_" + now_func.blocks.size());
             now_func.blocks.add(next_block);
-
-            now.lhs.accept(this);
+            IRValue lval = now.lhs.val;
             if (now.op.equals("&&"))
             {
                 if (lval instanceof Constant)
@@ -601,6 +681,7 @@ public class IRBuilder extends ASTVisitor
                         now_block = rhs_block;
 
                         now.rhs.accept(this);
+                        IRValue rval = now.rhs.val;
                         now.val = rval;
                     }
                     else
@@ -612,6 +693,7 @@ public class IRBuilder extends ASTVisitor
                     now_block = rhs_block;
 
                     now.rhs.accept(this);
+                    IRValue rval = now.rhs.val;
                     now.val = new Register(type, false, "phi_and", reg_cnt++);
                     next_block.irst.add(new IRPhi(now.val, new Constant(type, 0), lhs_block, rval, rhs_block));
                 }
@@ -626,6 +708,7 @@ public class IRBuilder extends ASTVisitor
                         now_block = rhs_block;
 
                         now.rhs.accept(this);
+                        IRValue rval = now.rhs.val;
                         now.val = rval;
                     }
                     else
@@ -637,6 +720,7 @@ public class IRBuilder extends ASTVisitor
                     now_block = rhs_block;
 
                     now.rhs.accept(this);
+                    IRValue rval = now.rhs.val;
                     now.val = new Register(type, false, "phi_or", reg_cnt++);
                     next_block.irst.add(new IRPhi(now.val, new Constant(type, 1), lhs_block, rval, rhs_block));
                 }
@@ -659,34 +743,36 @@ public class IRBuilder extends ASTVisitor
     {
         now.obj.accept(this);
         
-        if (now.obj.dim == 0)
+        if (!now.func.idt.equals("__builtin_size"))
         {
             now.para.forEach(i -> i.accept(this));
 
             Function func = funcs.get(get_func_name(now.func));
             IRType type = types.get(now.type);
+            if (now.dim != 0)
+                type = new IRPointer(now.dim, type);
 
             now.val = new Register(type, false, "call_now_val", reg_cnt++);
             IRCall call = new IRCall(now.val, func);
-            now_block.irst.add(call);
-
+            
             if (now.func.belong != null)
             {
-                Register this_ptr;
+                Register this_val;
                 if (now.obj instanceof ObjExprNode)
-                    this_ptr = ((ObjExprNode) now.obj).obj.ptr;
+                    this_val = (Register) ((ObjExprNode) now.obj).obj.val;
                 else
-                    this_ptr = now_func.thisptr;
-                
-                call.para.add(this_ptr);
-            }
+                    this_val = now_func.thisptr;
 
+                call.para.add(this_val);
+            }
+            
+            now_block.irst.add(call);
             now.para.forEach(i -> call.para.add(i.val));
         }
         else
         {
             Register tmp_ptr = new Register(new IRPointer(1, new IRInt()), false, "tmp_ptr", reg_cnt++);
-            now_block.irst.add(new IRBitcast(tmp_ptr, now.obj.val));
+            now_block.irst.add(new IRBitcast(tmp_ptr, ((ObjExprNode) now.obj).obj.val));
             now.ptr = new Register(new IRPointer(1, new IRInt()), false, "len_ptr", reg_cnt++);
             now_block.irst.add(new IRGetelementptr(now.ptr, tmp_ptr, new Constant(new IRInt(), -1), false));
 
@@ -698,29 +784,33 @@ public class IRBuilder extends ASTVisitor
     Register get_new_array(int now_dim, NvarExprNode now)
     {
         IRType type = types.get(now.type);
-        Register ans = new Register(new IRPointer(now.dim - now_dim, type), false, "array_" + (now.dim - now_dim), reg_cnt++);
-        now_func.init_block.irst.add(new IRAlloca(ans, ans.type));
-
+        // now_func.init_block.irst.add(new IRAlloca(ans, ans.type));
+        
         Register len = new Register(new IRInt(), false, "array_len", reg_cnt++);
-        now_block.irst.add(new IRBinaryExpr(len, binary_op_type.mul, now.expr.get(now_dim).val, new Constant(new IRInt(), 4)));
+        now_block.irst.add(new IRBinaryExpr(len, binary_op_type.mul, now.expr.get(now_dim).val, new Constant(new IRInt(), 8)));
         Register malloc_len = new Register(new IRInt(), false, "malloc_len", reg_cnt++);
         now_block.irst.add(new IRBinaryExpr(malloc_len, binary_op_type.add, len, new Constant(new IRInt(), 4)));
-
+        
         Function malloc = funcs.get("__builtin_malloc");
         Register tmp = new Register(new IRPointer(1, new IRChar()), false, "malloc_tmp", reg_cnt++);
         IRCall call = new IRCall(tmp, malloc);
         call.para.add(malloc_len);
         now_block.irst.add(call);
-        now_block.irst.add(new IRBitcast(ans, tmp));
+        Register store_len = new Register(new IRPointer(1, new IRInt()), false, "store_len" + (now.dim - now_dim), reg_cnt++);
+        now_block.irst.add(new IRBitcast(store_len, tmp));
+        now_block.irst.add(new IRStore(store_len, now.expr.get(now_dim).val));
 
-        Register start = new Register(ans.type, false, "start", reg_cnt++);
-        now_block.irst.add(new IRGetelementptr(start, ans, new Constant(new IRInt(), 1), false));
+        Register ans = new Register(new IRPointer(1, new IRInt()), false, "ans_" + (now.dim - now_dim), reg_cnt++);
+        now_block.irst.add(new IRGetelementptr(ans, store_len, new Constant(new IRInt(), 1), false));
+        Register start = new Register(new IRPointer(now.dim - now_dim, type), false, "start", reg_cnt++);
+        now_block.irst.add(new IRBitcast(start, ans));
+
 
         if (now_dim == now.expr.size() - 1)
             return start;
         
         Register offset_ptr = new Register(new IRPointer(1, new IRInt()), false, "offset_ptr" + (now.dim - now_dim), reg_cnt++);
-        now_func.init_block.irst.add(new IRAlloca(offset_ptr, offset_ptr.type));
+        now_func.init_block.irst.add(new IRAlloca(offset_ptr, new IRInt()));
         now_block.irst.add(new IRStore(offset_ptr, new Constant(new IRInt(), 0)));
 
         BasicBlock cond_block = new BasicBlock(now_func.name + "_" + now_func.blocks.size());
@@ -733,7 +823,7 @@ public class IRBuilder extends ASTVisitor
         now_block.irst.add(new IRJump(body_block));
         now_block = body_block;
 
-        Register now_pos = new Register(ans.type, false, "start", reg_cnt++);
+        Register now_pos = new Register(new IRPointer(now.dim - now_dim, type), false, "start", reg_cnt++);
         Register now_offset = new Register(new IRInt(), false, "now_offset", reg_cnt++);
         now_block.irst.add(new IRLoad(now_offset, offset_ptr));
         now_block.irst.add(new IRGetelementptr(now_pos, start, now_offset, false));
@@ -756,24 +846,16 @@ public class IRBuilder extends ASTVisitor
 
     public void visit(NvarExprNode now)
     {
+        now.ptr = null;
         now.expr.forEach(i -> i.accept(this));
 
         if (now.expr.size() > 0)
-        {
-            now.ptr = get_new_array(0, now);
-            if (now.expr.size() == 1)
-                now.val = new Register(types.get(now.type), false, "array_now_val", reg_cnt++);
-            else
-                now.val = new Register(new IRPointer(now.dim - 1, types.get(now.type)), false, "array_now_val", reg_cnt++);
-            
-            now_block.irst.add(new IRLoad(now.val, now.ptr));
-        }
+            now.val = get_new_array(0, now);
         else
         {
             IRType type = types.get(now.type);
-            int size = type.get_size();
-            now.ptr = new Register(new IRPointer(2, type), false, "class_ptr", reg_cnt++);
-            now.val = new Register(new IRPointer(1, type), false, "class_val", reg_cnt++);
+            int size = ((IRPointer)type).basic_type.get_size();
+            now.val = new Register(type, false, "class_val", reg_cnt++);
 
             Function malloc = funcs.get("__builtin_malloc");
             Register tmp = new Register(new IRPointer(1, new IRChar()), false, "malloc_tmp", reg_cnt++);
@@ -782,21 +864,23 @@ public class IRBuilder extends ASTVisitor
             now_block.irst.add(call);
             now_block.irst.add(new IRBitcast(now.val, tmp));
 
-            now_block.irst.add(new IRStore(now.ptr, now.val));
-
             if (now.cls.cons != null)
             {
                 Function func = funcs.get(get_func_name(now.cls.cons));
-                now_block.irst.add(new IRCall(null, func));
+                IRCall call_cons = new IRCall(null, func);
+                call_cons.para.add(now.val);
+                now_block.irst.add(call_cons);
             }
         }
     }
 
     public void visit(ObjExprNode now)
     {
-        if (now.is_func != null) return;
         now.obj.accept(this);
+        if (now.is_func != null) return;
         IRType type = types.get(now.type);
+        if (now.dim != 0)
+            type = new IRPointer(now.dim, type);
 
         now.ptr = new Register(new IRPointer(1, type), false, "obj_now_ptr", reg_cnt++);
         now_block.irst.add(new IRGetelementptr(now.ptr, now.obj.val, new Constant(new IRInt(), now.defnode.offset), true));
@@ -918,14 +1002,17 @@ public class IRBuilder extends ASTVisitor
     {
         if (now.cate == 0)
         {
+            if (now.is_func != null) return;
+
             OneVarDefNode def = now.defnode;
             IRType now_type = types.get(def.type);
+            if (def.dim != 0)
+                now_type = new IRPointer(def.dim, now_type);
 
             now.ptr = def.ptr;
             if (now.ptr == null)
             {
-                IRValue _this = new Register(now_class, false, "this", reg_cnt++);
-                now_block.irst.add(new IRLoad(_this, now_func.thisptr));
+                IRValue _this = now_func.thisptr;
                 
                 now.ptr = new Register(new IRPointer(1, now_type), false, now.s + "_ptr", reg_cnt++);
                 now_block.irst.add(new IRGetelementptr(now.ptr, _this, new Constant(new IRInt(), def.offset), true));
@@ -933,17 +1020,14 @@ public class IRBuilder extends ASTVisitor
                 
             now.val = new Register(now_type, false, now.s + "_val", reg_cnt++);
             now_block.irst.add(new IRLoad(now.val, now.ptr));
+
         }
         else if (now.cate == 1)
             now.val = new Constant(types.get("int"), Integer.valueOf(now.s));
         else if (now.cate == 2)
             now.val = new Constant(types.get("null"), 0);
         else if (now.cate == 3)
-        {
-            now.ptr = now_func.thisptr;
-            now.val = new Register(now_class, false, "this", reg_cnt++);
-            now_block.irst.add(new IRLoad(now.val, now.ptr));
-        }
+            now.val = now_func.thisptr;
         else if (now.cate == 4)
             now.val = new Constant(types.get("bool"), 1);
         else if (now.cate == 5)
@@ -960,12 +1044,13 @@ public class IRBuilder extends ASTVisitor
                 str = const_string.get(now.s);
             else
             {
-                str = new ConstString(now.s, now.s.length(), types.get("string"));
+                str = new ConstString(now.s, new IRPointer(1, new IRStr(now.s.length() - 2)), str_cnt++);
                 global.strs.add(str);
                 const_string.put(now.s, str);
             }
 
-            now.val = str;
+            now.val = new Register(new IRPointer(1, new IRChar()), false, "string_to_char", reg_cnt++);
+            now_block.irst.add(new IRGetelementptr(now.val, str, new Constant(new IRInt(), 0), true));
         }
     }
 
@@ -1004,22 +1089,30 @@ public class IRBuilder extends ASTVisitor
         now_func.blocks.add(new_block);
 
         break_to.push(new_block);
-        continue_to.push(cond_block);
+        continue_to.push(next_block);
 
-        now.init.accept(this);
-        now_block.irst.add(new IRJump(body_block));
+        if (now.init != null)
+            now.init.accept(this);
+        now_block.irst.add(new IRJump(cond_block));
         now_block = body_block;
 
-        now.st.accept(this);
-        now_block.irst.add(new IRJump(cond_block));
+        if (now.st != null)
+            now.st.accept(this);
+        now_block.irst.add(new IRJump(next_block));
         now_block = cond_block;
 
-        now.cond.accept(this);
-        now_block.irst.add(new IRBranch(now.cond.val, next_block, new_block));
+        if (now.cond != null)
+        {
+            now.cond.accept(this);
+            now_block.irst.add(new IRBranch(now.cond.val, body_block, new_block));
+        }
+        else
+            now_block.irst.add(new IRJump(body_block));
         now_block = next_block;
         
-        now.next.accept(this);
-        now_block.irst.add(new IRJump(body_block));
+        if (now.next != null)
+            now.next.accept(this);
+        now_block.irst.add(new IRJump(cond_block));
         now_block = new_block;
 
         break_to.pop();

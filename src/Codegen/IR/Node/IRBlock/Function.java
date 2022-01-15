@@ -2,7 +2,6 @@ package Codegen.IR.Node.IRBlock;
 
 import java.util.ArrayList;
 
-import Codegen.IR.IRVisitor;
 import Codegen.IR.Node.IRType.IRType;
 import Codegen.IR.Node.IRValue.IRValue;
 import Codegen.IR.Node.IRValue.Register;
@@ -29,7 +28,7 @@ public class Function
     {
         String s = return_type.toString() + " @" + name;
         s += "(";
-        for (int i = 0; i < para.size() - 1; i++)
+        for (int i = 0; i < para.size(); i++)
             s += para.get(i).type.toString() + " " 
             + para.get(i).toString() 
             + (i == para.size() - 1 ? "" : ", ");
@@ -48,8 +47,4 @@ public class Function
         return s;
     }
 
-    public void accept(IRVisitor visitor)
-    {
-        visitor.visit(this);
-    }
 }

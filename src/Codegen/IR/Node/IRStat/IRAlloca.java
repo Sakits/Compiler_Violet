@@ -1,6 +1,5 @@
 package Codegen.IR.Node.IRStat;
 
-import Codegen.IR.IRVisitor;
 import Codegen.IR.Node.IRType.IRType;
 import Codegen.IR.Node.IRValue.IRValue;
 
@@ -19,10 +18,5 @@ public class IRAlloca extends IRStat
     @Override public String toString()
     {
         return dest.toString() + " = alloca " + type.toString();
-    }
-
-    public void accept(IRVisitor visitor)
-    {
-        visitor.visit(this);
     }
 }

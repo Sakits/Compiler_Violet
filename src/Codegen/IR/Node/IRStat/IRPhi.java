@@ -1,6 +1,5 @@
 package Codegen.IR.Node.IRStat;
 
-import Codegen.IR.IRVisitor;
 import Codegen.IR.Node.IRBlock.BasicBlock;
 import Codegen.IR.Node.IRValue.IRValue;
 
@@ -24,10 +23,5 @@ public class IRPhi extends IRStat
         return dest + " = phi i1 " 
              + "[" + src1.toString() + ", %" + block1.tag + "], "
              + "[" + src2.toString() + ", %" + block2.tag + "]"; 
-    }
-
-    public void accept(IRVisitor visitor)
-    {
-        visitor.visit(this);
     }
 }

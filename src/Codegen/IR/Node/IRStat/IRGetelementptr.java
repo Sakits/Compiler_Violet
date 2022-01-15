@@ -1,6 +1,6 @@
 package Codegen.IR.Node.IRStat;
 
-import Codegen.IR.IRVisitor;
+import Codegen.IR.Node.IRType.IRPointer;
 import Codegen.IR.Node.IRValue.IRValue;
 
 public class IRGetelementptr extends IRStat
@@ -16,18 +16,17 @@ public class IRGetelementptr extends IRStat
         this.ptr = ptr;
         this.offset = offset;
         this.is_class = is_class;
+        assert ptr.type instanceof IRPointer;
     }
 
     public String toString()
     {
+        IRPointer tmp = (IRPointer) ptr.type;
         return dest.toString() + " = getelementptr "
-             + ptr.toString() + ", "
+             + (new IRPointer(tmp.dim - 1, tmp.basic_type)).toString() + ", "
+             + ptr.type.toString() + " " + ptr.toString() + ", "
              + (is_class ? "i32 0, " : "")
              + "i32 " + offset.toString();
     }
 
-    public void accept(IRVisitor visitor)
-    {
-        visitor.visit(this);
-    }
 }

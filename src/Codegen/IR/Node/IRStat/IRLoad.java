@@ -1,6 +1,5 @@
 package Codegen.IR.Node.IRStat;
 
-import Codegen.IR.IRVisitor;
 import Codegen.IR.Node.IRType.IRType;
 import Codegen.IR.Node.IRValue.IRValue;
 
@@ -24,8 +23,4 @@ public class IRLoad extends IRStat
              + ptr.type.toString() + " " + ptr.toString();
     }
 
-    public void accept(IRVisitor visitor)
-    {
-        visitor.visit(this);
-    }
 }

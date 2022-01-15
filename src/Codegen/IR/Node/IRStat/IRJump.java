@@ -1,6 +1,5 @@
 package Codegen.IR.Node.IRStat;
 
-import Codegen.IR.IRVisitor;
 import Codegen.IR.Node.IRBlock.BasicBlock;
 
 public class IRJump extends IRStat
@@ -15,11 +14,7 @@ public class IRJump extends IRStat
 
     public String toString()
     {
-        return "br lable %" + dest_block.tag;
+        return "br label %" + dest_block.tag;
     }
 
-    public void accept(IRVisitor visitor)
-    {
-        visitor.visit(this);
-    }
 }

@@ -1,6 +1,5 @@
 package Codegen.IR.Node.IRStat;
 
-import Codegen.IR.IRVisitor;
 import Codegen.IR.Node.IRValue.IRValue;
 
 public class IRMalloc extends IRStat
@@ -20,8 +19,4 @@ public class IRMalloc extends IRStat
              + size.type.toString() + " " + size.toString() + ")";
     }
 
-    public void accept(IRVisitor visitor)
-    {
-        visitor.visit(this);
-    }
 }

@@ -5,25 +5,26 @@ import Codegen.IR.Node.IRType.IRType;
 public class ConstString extends IRValue
 {
     public String s;
-    public int len;
+    public int num;
 
-    public ConstString(String s, int len, IRType type)
+    public ConstString(String s, IRType type, int num)
     {
         super(type);
-        this.s = s;
-        this.len = len;
+        this.s = s.substring(1, s.length() - 2) + '\0';
+        this.num = num;
     }
 
     @Override public String toString() 
     {
-        return s;
+        return "@str_" + num;
     }
 
     public String declare()
     {
-        String ans = toString() + " = private unnamed_addr constant ";
-        ans += "[" + (len + 1) + " x i8]* ";
-        ans += "c\"" + s + "\\00\"";
+        String ans = "@str_" + num + " = ";
+        ans += "private unnamed_addr constant ";
+        ans += "[" + s.length() + " x i8] ";
+        ans += "c\"" + s.replace("\\", "\\5C").replace("\n", "\\0A").replace("\"", "\\22").replace("\0", "\\00")+ "\"";
         return ans;
     }
 }

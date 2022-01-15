@@ -1,5 +1,6 @@
 package Codegen.IR.Node.IRValue;
 
+import Codegen.IR.Node.IRType.IRPointer;
 import Codegen.IR.Node.IRType.IRType;
 
 public class Register extends IRValue
@@ -27,7 +28,9 @@ public class Register extends IRValue
         assert init_val != null;
         String s = toString();
         s += " = global ";
-        s += type.toString() + " " + init_val.toString();
+        IRPointer pre_type = (IRPointer)type;
+        pre_type = new IRPointer(pre_type.dim - 1, pre_type.basic_type);
+        s += pre_type.toString() + " " + init_val.toString();
         return s;
     }
 }
