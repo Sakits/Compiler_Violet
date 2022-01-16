@@ -9,7 +9,7 @@ public class OneVarDefNode extends ASTNode
     public String idt, type;
     public int dim;
     public ExprNode init_val;
-    public Register ptr = null;
+    public Register val = null;
     public ClassDefNode belong = null;
     public Integer offset = 0;
 
