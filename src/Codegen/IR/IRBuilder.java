@@ -319,11 +319,8 @@ public class IRBuilder extends ASTVisitor
             type = new IRPointer(now.dim, type);
 
         now.val = new Register(type, false, now.one_var.idt + "_val", reg_cnt++);
-        now.ptr = new Register(new IRPointer(1, type), false, now.one_var.idt + "_ptr", reg_cnt++);
-        now_func.init_block.irst.add(new IRAlloca(now.ptr, type));
-        now_block.irst.add(new IRStore(now.ptr, now.val));
 
-        now.one_var.ptr = now.ptr;
+        now.one_var.val = now.val;
     }
 
     public void visit(VarDefNode now)
@@ -346,11 +343,11 @@ public class IRBuilder extends ASTVisitor
 
         if (now_func.name.equals("__builtin_init"))
         {
-            now.ptr = new Register(new IRPointer(1, now_type), true, now.idt, reg_cnt++);
+            now.val = new Register(now_type, true, now.idt, reg_cnt++);
             if (init_val != null)
             {
                 if (init_val instanceof Constant)
-                    now.ptr.init_val = (Constant) init_val;
+                    now.val.init_val = (Constant) init_val;
                 else
                 {
                     now.ptr.init_val = new Constant(now_type, 0);
@@ -383,22 +380,20 @@ public class IRBuilder extends ASTVisitor
 
         IRType type = types.get(now.type);
 
-        now.ptr = new Register(new IRPointer(now.dim + 1, type), false, "now_ptr", reg_cnt++);
-        now_block.irst.add(new IRGetelementptr(now.ptr, now.obj.val, now.offset.val, false));
+        Register ptr = new Register(new IRPointer(now.dim + 1, type), false, "now_ptr", reg_cnt++);
+        now_block.irst.add(new IRGetelementptr(ptr, now.obj.val, now.offset.val, false));
 
         if (now.dim == 0)
             now.val = new Register(type, false, "now_val_last", reg_cnt++);
         else
             now.val = new Register(new IRPointer(now.dim, type), false, "now_val_mid", reg_cnt++);
-        now_block.irst.add(new IRLoad(now.val, now.ptr));
+        now_block.irst.add(new IRLoad(now.val, ptr));
     }
 
     public void visit(AssignExprNode now)
     {
         now.lhs.accept(this);
-        assert now.lhs.ptr != null;
         now.rhs.accept(this);
-        now_block.irst.add(new IRStore(now.lhs.ptr, now.rhs.val));
         now.lhs.val = now.rhs.val;
     }
     
@@ -736,7 +731,6 @@ public class IRBuilder extends ASTVisitor
         now.expr.accept(this);
 
         now.val = now.expr.val;
-        now.ptr = now.expr.ptr;
     }
 
     public void visit(CallExprNode now)
@@ -773,11 +767,11 @@ public class IRBuilder extends ASTVisitor
         {
             Register tmp_ptr = new Register(new IRPointer(1, new IRInt()), false, "tmp_ptr", reg_cnt++);
             now_block.irst.add(new IRBitcast(tmp_ptr, ((ObjExprNode) now.obj).obj.val));
-            now.ptr = new Register(new IRPointer(1, new IRInt()), false, "len_ptr", reg_cnt++);
-            now_block.irst.add(new IRGetelementptr(now.ptr, tmp_ptr, new Constant(new IRInt(), -1), false));
+            Register ptr = new Register(new IRPointer(1, new IRInt()), false, "len_ptr", reg_cnt++);
+            now_block.irst.add(new IRGetelementptr(ptr, tmp_ptr, new Constant(new IRInt(), -1), false));
 
             now.val = new Register(new IRInt(), false, "len_val", reg_cnt++);
-            now_block.irst.add(new IRLoad(now.val, now.ptr));
+            now_block.irst.add(new IRLoad(now.val, ptr));
         }
     }
 
@@ -809,9 +803,8 @@ public class IRBuilder extends ASTVisitor
         if (now_dim == now.expr.size() - 1)
             return start;
         
-        Register offset_ptr = new Register(new IRPointer(1, new IRInt()), false, "offset_ptr" + (now.dim - now_dim), reg_cnt++);
-        now_func.init_block.irst.add(new IRAlloca(offset_ptr, new IRInt()));
-        now_block.irst.add(new IRStore(offset_ptr, new Constant(new IRInt(), 0)));
+        Register now_offset = new Register(new IRInt(), false, "now_offset", reg_cnt++);
+        now_block.irst.add(new IRBinaryExpr(now_offset, binary_op_type.add, new Constant(new IRInt(), 0), new Constant(new IRInt(), 0)));
 
         BasicBlock cond_block = new BasicBlock(now_func.name + "_" + now_func.blocks.size());
         now_func.blocks.add(cond_block);
@@ -824,20 +817,16 @@ public class IRBuilder extends ASTVisitor
         now_block = body_block;
 
         Register now_pos = new Register(new IRPointer(now.dim - now_dim, type), false, "start", reg_cnt++);
-        Register now_offset = new Register(new IRInt(), false, "now_offset", reg_cnt++);
-        now_block.irst.add(new IRLoad(now_offset, offset_ptr));
         now_block.irst.add(new IRGetelementptr(now_pos, start, now_offset, false));
         now_block.irst.add(new IRStore(now_pos, get_new_array(now_dim + 1, now)));
 
         now_block.irst.add(new IRJump(cond_block));
         now_block = cond_block;
 
-        Register new_offset = new Register(new IRInt(), false, "new_offset", reg_cnt++);
-        now_block.irst.add(new IRBinaryExpr(new_offset, binary_op_type.add, now_offset, new Constant(new IRInt(), 1)));
-        now_block.irst.add(new IRStore(offset_ptr, new_offset));
+        now_block.irst.add(new IRBinaryExpr(now_offset, binary_op_type.add, now_offset, new Constant(new IRInt(), 1)));
 
         Register flag = new Register(new IRBool(), false, "flag", reg_cnt++);
-        now_block.irst.add(new IRCmp(flag, cmp_op_type.eq, new_offset, now.expr.get(now_dim).val));
+        now_block.irst.add(new IRCmp(flag, cmp_op_type.eq, now_offset, now.expr.get(now_dim).val));
         now_block.irst.add(new IRBranch(flag, new_block, body_block));
         now_block = new_block;
 
@@ -846,7 +835,6 @@ public class IRBuilder extends ASTVisitor
 
     public void visit(NvarExprNode now)
     {
-        now.ptr = null;
         now.expr.forEach(i -> i.accept(this));
 
         if (now.expr.size() > 0)
@@ -882,11 +870,11 @@ public class IRBuilder extends ASTVisitor
         if (now.dim != 0)
             type = new IRPointer(now.dim, type);
 
-        now.ptr = new Register(new IRPointer(1, type), false, "obj_now_ptr", reg_cnt++);
-        now_block.irst.add(new IRGetelementptr(now.ptr, now.obj.val, new Constant(new IRInt(), now.defnode.offset), true));
+        Register ptr = new Register(new IRPointer(1, type), false, "obj_now_ptr", reg_cnt++);
+        now_block.irst.add(new IRGetelementptr(ptr, now.obj.val, new Constant(new IRInt(), now.defnode.offset), true));
 
         now.val = new Register(type, false, "obj_now_val", reg_cnt++);
-        now_block.irst.add(new IRLoad(now.val, now.ptr));
+        now_block.irst.add(new IRLoad(now.val, ptr));
     }
 
     public void visit(PrefixExprNode now)
@@ -907,8 +895,7 @@ public class IRBuilder extends ASTVisitor
                     now.val = new Register(type, false, "pre_add", reg_cnt++);
                     now_block.irst.add(new IRBinaryExpr(now.val, op, val, new Constant(type, 1)));
                 }
-                now.ptr = now.obj.ptr;
-                now_block.irst.add(new IRStore(now.ptr, now.val));
+                now.val = now.obj.val;
                 break;
             
             case "--" :
@@ -920,8 +907,7 @@ public class IRBuilder extends ASTVisitor
                     now.val = new Register(type, false, "pre_sub", reg_cnt++);
                     now_block.irst.add(new IRBinaryExpr(now.val, op, val, new Constant(type, 1)));
                 }
-                now.ptr = now.obj.ptr;
-                now_block.irst.add(new IRStore(now.ptr, now.val));
+                now.val = now.obj.val;
                 break;
 
             case "+" :
@@ -981,7 +967,7 @@ public class IRBuilder extends ASTVisitor
                     now.val = new Register(type, false, "pre_add", reg_cnt++);
                     now_block.irst.add(new IRBinaryExpr(now.val, op, val, new Constant(type, 1)));
                 }
-                now_block.irst.add(new IRStore(now.obj.ptr, now.val));
+                now.obj.val = now.val;
                 break;
             
             case "--" :
@@ -993,7 +979,7 @@ public class IRBuilder extends ASTVisitor
                     now.val = new Register(type, false, "pre_sub", reg_cnt++);
                     now_block.irst.add(new IRBinaryExpr(now.val, op, val, new Constant(type, 1)));
                 }
-                now_block.irst.add(new IRStore(now.obj.ptr, now.val));
+                now.obj.val = now.val; 
                 break;
         }
     }
