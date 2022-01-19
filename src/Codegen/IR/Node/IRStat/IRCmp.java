@@ -1,5 +1,6 @@
 package Codegen.IR.Node.IRStat;
 
+import Codegen.Assembly.ASMBuilder;
 import Codegen.IR.Node.IRValue.IRValue;
 
 public class IRCmp extends IRStat
@@ -24,5 +25,10 @@ public class IRCmp extends IRStat
              + lhs.type.toString() + " "
              + lhs.toString() + ", "
              + rhs.toString();
+    }
+
+    public void accept(ASMBuilder visitor)
+    {
+        visitor.visit(this);
     }
 }

@@ -1,12 +1,13 @@
 package Codegen.IR.Node.IRStat;
 
-import Codegen.IR.Node.IRBlock.BasicBlock;
+import Codegen.Assembly.ASMBuilder;
+import Codegen.IR.Node.IRBlock.IRBlock;
 
 public class IRJump extends IRStat
 {
-    public BasicBlock dest_block;
+    public IRBlock dest_block;
 
-    public IRJump(BasicBlock dest_block)
+    public IRJump(IRBlock dest_block)
     {
         super();
         this.dest_block = dest_block;
@@ -17,4 +18,8 @@ public class IRJump extends IRStat
         return "br label %" + dest_block.tag;
     }
 
+    public void accept(ASMBuilder visitor)
+    {
+        visitor.visit(this);
+    }
 }

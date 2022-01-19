@@ -1,5 +1,6 @@
 package Codegen.IR.Node.IRValue;
 
+import Codegen.Assembly.ASMValue.ASMHeapAddr;
 import Codegen.IR.Node.IRType.IRPointer;
 import Codegen.IR.Node.IRType.IRType;
 
@@ -9,6 +10,9 @@ public class Register extends IRValue
     public boolean is_global;
     public String idt;
     public Constant init_val = null;
+
+    // Codegen
+    public ASMHeapAddr addr;
 
     public Register(IRType type, boolean is_global, String idt, int num)
     {

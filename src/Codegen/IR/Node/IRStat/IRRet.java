@@ -1,5 +1,6 @@
 package Codegen.IR.Node.IRStat;
 
+import Codegen.Assembly.ASMBuilder;
 import Codegen.IR.Node.IRValue.IRValue;
 
 public class IRRet extends IRStat
@@ -17,4 +18,8 @@ public class IRRet extends IRStat
         return "ret " + val.type.toString() + " " + val.toString();
     }
 
+    public void accept(ASMBuilder visitor)
+    {
+        visitor.visit(this);
+    }
 }

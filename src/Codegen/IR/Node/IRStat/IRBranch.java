@@ -1,14 +1,15 @@
 package Codegen.IR.Node.IRStat;
 
-import Codegen.IR.Node.IRBlock.BasicBlock;
+import Codegen.Assembly.ASMBuilder;
+import Codegen.IR.Node.IRBlock.IRBlock;
 import Codegen.IR.Node.IRValue.IRValue;
 
 public class IRBranch extends IRStat
 {
     public IRValue cond;
-    public BasicBlock true_block, false_block;
+    public IRBlock true_block, false_block;
 
-    public IRBranch (IRValue cond, BasicBlock true_block, BasicBlock false_block)
+    public IRBranch (IRValue cond, IRBlock true_block, IRBlock false_block)
     {
         super();
         this.cond = cond;
@@ -21,5 +22,10 @@ public class IRBranch extends IRStat
         return "br i1 " + this.cond.toString() + ", "
              + "label %" + this.true_block.tag + ", "
              + "label %" + this.false_block.tag;
+    }
+
+    public void accept(ASMBuilder visitor)
+    {
+        visitor.visit(this);
     }
 }

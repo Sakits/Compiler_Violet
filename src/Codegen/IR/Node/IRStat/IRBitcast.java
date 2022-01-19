@@ -1,5 +1,6 @@
 package Codegen.IR.Node.IRStat;
 
+import Codegen.Assembly.ASMBuilder;
 import Codegen.IR.Node.IRType.IRType;
 import Codegen.IR.Node.IRValue.IRValue;
 
@@ -23,5 +24,10 @@ public class IRBitcast extends IRStat
              + this.from.toString() + " "
              + this.val.toString() + " to "
              + this.to.toString();
+    }
+
+    public void accept(ASMBuilder visitor)
+    {
+        visitor.visit(this);
     }
 }

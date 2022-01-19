@@ -1,11 +1,15 @@
 package Codegen.IR.Node.IRValue;
 
+import Codegen.Assembly.ASMValue.ASMHeapAddr;
 import Codegen.IR.Node.IRType.IRType;
 
 public class ConstString extends IRValue
 {
     public String s;
     public int num;
+
+    // Codegen
+    public ASMHeapAddr addr = null;
 
     public ConstString(String s, IRType type, int num)
     {

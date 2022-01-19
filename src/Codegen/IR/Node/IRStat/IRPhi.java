@@ -1,14 +1,15 @@
 package Codegen.IR.Node.IRStat;
 
-import Codegen.IR.Node.IRBlock.BasicBlock;
+import Codegen.Assembly.ASMBuilder;
+import Codegen.IR.Node.IRBlock.IRBlock;
 import Codegen.IR.Node.IRValue.IRValue;
 
 public class IRPhi extends IRStat
 {
     public IRValue dest, src1, src2;
-    public BasicBlock block1, block2;
+    public IRBlock block1, block2;
 
-    public IRPhi(IRValue dest, IRValue src1, BasicBlock block1, IRValue src2, BasicBlock block2)
+    public IRPhi(IRValue dest, IRValue src1, IRBlock block1, IRValue src2, IRBlock block2)
     {
         super();
         this.dest = dest;
@@ -23,5 +24,10 @@ public class IRPhi extends IRStat
         return dest + " = phi i1 " 
              + "[" + src1.toString() + ", %" + block1.tag + "], "
              + "[" + src2.toString() + ", %" + block2.tag + "]"; 
+    }
+
+    public void accept(ASMBuilder visitor)
+    {
+        visitor.visit(this);
     }
 }

@@ -1,4 +1,4 @@
-package Semantic.Frontend;
+package Semantic.Checker;
 
 
 import Semantic.AST.ASTVisitor;

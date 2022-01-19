@@ -5,8 +5,8 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
-import Codegen.IR.Node.IRBlock.BasicBlock;
-import Codegen.IR.Node.IRBlock.Function;
+import Codegen.IR.Node.IRBlock.IRBlock;
+import Codegen.IR.Node.IRBlock.IRFunc;
 import Codegen.IR.Node.IRBlock.IRGlobal;
 
 public class IRPrinter
@@ -60,7 +60,7 @@ public class IRPrinter
         });
     }
 
-    public void visit(Function func)
+    public void visit(IRFunc func)
     {
         printer.println(func.declare(false));
         printer.println("{");
@@ -70,7 +70,7 @@ public class IRPrinter
         printer.println("}");
     }
 
-    public void visit(BasicBlock block)
+    public void visit(IRBlock block)
     {
         printer.println(block.toString());
         block.irst.forEach(i -> {

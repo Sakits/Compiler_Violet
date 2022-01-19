@@ -33,4 +33,12 @@ public class IRClass extends IRType
         s += " }";
         return s;
     }
+
+    public int get_offset(int pos)
+    {
+        int ans = 0;
+        for (int i = 0; i < pos - 1; i++)
+            ans += vars.get(i).size;
+        return ans;
+    }
 }

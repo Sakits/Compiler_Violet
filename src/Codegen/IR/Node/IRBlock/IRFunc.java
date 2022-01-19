@@ -2,25 +2,30 @@ package Codegen.IR.Node.IRBlock;
 
 import java.util.ArrayList;
 
+import Codegen.Assembly.ASMBuilder;
+import Codegen.Assembly.ASMBlock.ASMFunc;
 import Codegen.IR.Node.IRType.IRType;
 import Codegen.IR.Node.IRValue.IRValue;
 import Codegen.IR.Node.IRValue.Register;
 
-public class Function 
+public class IRFunc 
 {
-    public ArrayList<BasicBlock> blocks = new ArrayList<>();
+    public ArrayList<IRBlock> blocks = new ArrayList<>();
     public ArrayList<IRValue> para = new ArrayList<>();
     public String name;
     public IRType return_type;
-    public BasicBlock init_block;
+    public IRBlock init_block;
     public Register thisptr = null;
     public Boolean is_builtin = false;
 
-    public Function(IRType return_type, String name)
+    // Codegen
+    public ASMFunc func = null;
+
+    public IRFunc(IRType return_type, String name)
     {
         this.return_type = return_type;
         this.name = name;
-        this.init_block = new BasicBlock(name + "_init");
+        this.init_block = new IRBlock(name + "_init");
         blocks.add(this.init_block);
     }
 
@@ -47,4 +52,8 @@ public class Function
         return s;
     }
 
+    public void accept(ASMBuilder visitor)
+    {
+        visitor.visit(this);
+    }
 }

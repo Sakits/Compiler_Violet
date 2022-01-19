@@ -2,16 +2,17 @@ package Codegen.IR.Node.IRStat;
 
 import java.util.ArrayList;
 
-import Codegen.IR.Node.IRBlock.Function;
+import Codegen.Assembly.ASMBuilder;
+import Codegen.IR.Node.IRBlock.IRFunc;
 import Codegen.IR.Node.IRValue.IRValue;
 
 public class IRCall extends IRStat
 {
     public IRValue dest = null;
-    public Function func = null;
+    public IRFunc func = null;
     public ArrayList<IRValue> para = new ArrayList<>();
 
-    public IRCall(IRValue dest, Function func)
+    public IRCall(IRValue dest, IRFunc func)
     {
         super();
         assert func != null;
@@ -34,5 +35,10 @@ public class IRCall extends IRStat
             + (i == para.size() - 1 ? "" : ", ");
         s += ")";
         return s;
+    }
+
+    public void accept(ASMBuilder visitor)
+    {
+        visitor.visit(this);
     }
 }
