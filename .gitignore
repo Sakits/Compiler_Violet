@@ -8,9 +8,8 @@ tools
 /**/*.class
 /**/tmp.md
 
-test.mx
-test.ll
 test
+test.*
 1.in
 ac.out
 my.out
