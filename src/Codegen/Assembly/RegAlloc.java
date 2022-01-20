@@ -13,6 +13,7 @@ import Codegen.Assembly.ASMInst.ASMStore;
 import Codegen.Assembly.ASMInst.ASMBinary.binary_op_type;
 import Codegen.Assembly.ASMInst.ASMLoad.load_op_type;
 import Codegen.Assembly.ASMInst.ASMStore.store_op_type;
+import Codegen.Assembly.ASMValue.ASMAddr;
 import Codegen.Assembly.ASMValue.Immediate;
 import Codegen.Assembly.ASMValue.PhyReg;
 import Codegen.Assembly.ASMValue.VirReg;
@@ -96,8 +97,18 @@ public class RegAlloc
                         VirReg vir_reg = (VirReg)x;
                         PhyReg phy_reg = new PhyReg("s" + phy_cnt);
                         phy_cnt++;
-                        new_ins.add(new ASMLoad(load_op_type.lw, phy_reg, vir_reg.addr));
                         inst.change((VirReg)x, phy_reg);
+
+                        if (vir_reg.addr.offset.val < 2048)
+                            new_ins.add(new ASMLoad(load_op_type.lw, phy_reg, vir_reg.addr));
+                        else
+                        {
+                            PhyReg addr = new PhyReg("s" + phy_cnt);
+                            phy_cnt++;
+                            new_ins.add(new ASMLi(addr, vir_reg.addr.offset));
+                            new_ins.add(new ASMBinary(binary_op_type.add, addr, vir_reg.addr.base, addr));
+                            new_ins.add(new ASMLoad(load_op_type.lw, phy_reg, new ASMAddr(addr, new Immediate(0))));
+                        }
                     }
 
                     if (inst instanceof ASMRet)
@@ -135,8 +146,18 @@ public class RegAlloc
                         VirReg vir_reg = (VirReg)x;
                         PhyReg phy_reg = new PhyReg("s" + phy_cnt);
                         phy_cnt++;
-                        new_ins.add(new ASMStore(store_op_type.sw, phy_reg, vir_reg.addr));
                         inst.change((VirReg)x, phy_reg);
+
+                        if (vir_reg.addr.offset.val < 2048)
+                            new_ins.add(new ASMStore(store_op_type.sw, phy_reg, vir_reg.addr));
+                        else
+                        {
+                            PhyReg addr = new PhyReg("s" + phy_cnt);
+                            phy_cnt++;
+                            new_ins.add(new ASMLi(addr, vir_reg.addr.offset));
+                            new_ins.add(new ASMBinary(binary_op_type.add, addr, vir_reg.addr.base, addr));
+                            new_ins.add(new ASMStore(store_op_type.sw, phy_reg, new ASMAddr(addr, new Immediate(0))));
+                        }
                     }
                 }
 
