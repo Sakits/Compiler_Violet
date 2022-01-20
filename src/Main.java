@@ -33,6 +33,10 @@ public class Main
 
         try
         {
+            boolean Semantic = false;
+            if (args.length > 0) 
+                Semantic = true;
+
             MxstarLexer lexer = new MxstarLexer(CharStreams.fromStream(input));
             lexer.removeErrorListeners();
             lexer.addErrorListener(new MxStarErrorListener());
@@ -48,6 +52,8 @@ public class Main
             Symbols symbols = new Symbols();
             new SymbolCollector(symbols).visit(ast_root);
             new SemanticChecker(symbols).visit(ast_root);
+
+            if (Semantic) return;
 
             IRBuilder ir_builder = new IRBuilder();
             ir_builder.visit(ast_root);
