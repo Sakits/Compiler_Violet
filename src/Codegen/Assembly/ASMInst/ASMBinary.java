@@ -2,6 +2,8 @@ package Codegen.Assembly.ASMInst;
 
 import Codegen.Assembly.ASMValue.ASMReg;
 import Codegen.Assembly.ASMValue.ASMValue;
+import Codegen.Assembly.ASMValue.PhyReg;
+import Codegen.Assembly.ASMValue.VirReg;
 
 public class ASMBinary extends ASMInst
 {
@@ -28,6 +30,16 @@ public class ASMBinary extends ASMInst
         read_reg.add(rs1);
         if (rs2 instanceof ASMReg)
             read_reg.add((ASMReg)rs2);
+    }
+
+    public void change(VirReg vir, PhyReg phy) 
+    {
+        if (rd == vir)
+            rd = phy;
+        if (rs1 == vir)
+            rs1 = phy;
+        if (rs2 == vir)
+            rs2 = phy;
     }
 
     public String toString()

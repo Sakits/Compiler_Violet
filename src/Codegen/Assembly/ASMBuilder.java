@@ -119,6 +119,7 @@ public class ASMBuilder
             }
             else
                 addr.type = var_type.glo_int;
+            addr.val = i.init_val.val;
         });
 
         now.funcs.forEach(i -> i.func = new ASMFunc(i.name));
@@ -133,10 +134,9 @@ public class ASMBuilder
 
     public void visit(IRFunc now) 
     {
-        System.out.println(now.name);
         now_func = now.func;
         now.blocks.forEach(i -> {
-            i.block = new ASMBlock(i.tag);
+            i.block = new ASMBlock("." + i.tag);
             now_func.blocks.add(i.block);
         });
         now_block = now.init_block.block;
@@ -167,7 +167,10 @@ public class ASMBuilder
 
     public void visit(IRAlloca now) 
     {
-        now_func.para.add(new VirReg(((Register)now.dest).idt).addr);
+        VirReg reg = new VirReg(((Register)now.dest).idt);
+        reg.addr.offset = new Immediate(0);
+        now_func.alloca.add(reg.addr);
+        now_block.asm_ins.add(new ASMBinary(binary_op_type.addi, get_reg(now.dest), reg.addr.base, reg.addr.offset));
     }
 
     public void visit(IRBinaryExpr now) 
@@ -417,7 +420,6 @@ public class ASMBuilder
     public void visit(IRLoad now) 
     {
         ASMReg ans = get_reg(now.dest);
-
         ASMReg addr;
         if (now.ptr instanceof Register && ((Register)now.ptr).is_global)
         {
@@ -444,7 +446,7 @@ public class ASMBuilder
         }
         else
             addr = get_reg(now.ptr);
-
+            
         if (now.val.type.name.equals("bool"))
             now_block.asm_ins.add(new ASMStore(store_op_type.sb, val, new ASMAddr(addr, new Immediate(0))));
         else
@@ -454,6 +456,11 @@ public class ASMBuilder
     public void visit(IRPhi now) 
     {
         assert false;
+    }
+
+    public void visit(IRMove now)
+    {
+        now_block.asm_ins.add(new ASMMv(get_reg(now.dest), get_reg(now.src)));
     }
 
     public void visit(IRRet now) 

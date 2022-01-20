@@ -8,7 +8,7 @@ public class IRPointer extends IRType
 
     public IRPointer(int dim, IRType basic_type)
     {
-        super("", 64);
+        super("", 32);
         if (basic_type instanceof IRPointer)
         {
             this.dim = ((IRPointer)basic_type).dim + dim;

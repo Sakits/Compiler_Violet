@@ -1,6 +1,8 @@
 package Codegen.Assembly.ASMInst;
 
 import Codegen.Assembly.ASMValue.ASMReg;
+import Codegen.Assembly.ASMValue.PhyReg;
+import Codegen.Assembly.ASMValue.VirReg;
 
 public class ASMJudge extends ASMInst
 {
@@ -18,6 +20,14 @@ public class ASMJudge extends ASMInst
 
         read_reg.add(rs);
         write_reg.add(rd);
+    }
+
+    public void change(VirReg vir, PhyReg phy) 
+    {
+        if (rd == vir)
+            rd = phy;
+        if (rs == vir)
+            rs = phy;
     }
 
     public String toString()

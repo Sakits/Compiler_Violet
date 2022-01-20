@@ -15,7 +15,7 @@ import Codegen.IR.Node.IRStat.IRCmp;
 import Codegen.IR.Node.IRStat.IRGetelementptr;
 import Codegen.IR.Node.IRStat.IRJump;
 import Codegen.IR.Node.IRStat.IRLoad;
-import Codegen.IR.Node.IRStat.IRPhi;
+import Codegen.IR.Node.IRStat.IRMove;
 import Codegen.IR.Node.IRStat.IRRet;
 import Codegen.IR.Node.IRStat.IRStore;
 import Codegen.IR.Node.IRStat.IRBinaryExpr.binary_op_type;
@@ -692,7 +692,6 @@ public class IRBuilder extends ASTVisitor
         else
         {
             now.lhs.accept(this);
-            IRBlock lhs_block = now_block;
             IRBlock rhs_block = new IRBlock(now_func.name + "_" + now_func.blocks.size());
             now_func.blocks.add(rhs_block);
             IRBlock next_block = new IRBlock(now_func.name + "_" + now_func.blocks.size());
@@ -713,16 +712,25 @@ public class IRBuilder extends ASTVisitor
                     }
                     else
                         now.val = lval;
+                    
+                    now_block.irst.add(new IRJump(next_block));
                 }
                 else
                 {
-                    now_block.irst.add(new IRBranch(lval, rhs_block, next_block));
-                    now_block = rhs_block;
-
-                    now.rhs.accept(this);
-                    IRValue rval = now.rhs.val;
                     now.val = new Register(type, false, "phi_and", reg_cnt++);
-                    next_block.irst.add(new IRPhi(now.val, new Constant(type, 0), lhs_block, rval, rhs_block));
+                    IRBlock mid_block_1 = new IRBlock(now_func.name + "_" + now_func.blocks.size());
+                    now_func.blocks.add(mid_block_1);
+                    now_block.irst.add(new IRBranch(lval, rhs_block, mid_block_1));
+                    mid_block_1.irst.add(new IRMove(now.val, new Constant(type, 0)));
+                    mid_block_1.irst.add(new IRJump(next_block));
+
+                    now_block = rhs_block;
+                    now.rhs.accept(this);
+                    IRBlock mid_block_2 = new IRBlock(now_func.name + "_" + now_func.blocks.size());
+                    now_func.blocks.add(mid_block_2);
+                    now_block.irst.add(new IRJump(mid_block_2));
+                    mid_block_2.irst.add(new IRMove(now.val, now.rhs.val));
+                    mid_block_2.irst.add(new IRJump(next_block));
                 }
             }
             else
@@ -740,20 +748,27 @@ public class IRBuilder extends ASTVisitor
                     }
                     else
                         now.val = lval;
+                    
+                    now_block.irst.add(new IRJump(next_block));
                 }
                 else
                 {
-                    now_block.irst.add(new IRBranch(lval, next_block, rhs_block));
-                    now_block = rhs_block;
-
-                    now.rhs.accept(this);
-                    IRValue rval = now.rhs.val;
                     now.val = new Register(type, false, "phi_or", reg_cnt++);
-                    next_block.irst.add(new IRPhi(now.val, new Constant(type, 1), lhs_block, rval, rhs_block));
+                    IRBlock mid_block_1 = new IRBlock(now_func.name + "_" + now_func.blocks.size());
+                    now_func.blocks.add(mid_block_1);
+                    now_block.irst.add(new IRBranch(lval, mid_block_1, rhs_block));
+                    mid_block_1.irst.add(new IRMove(now.val, new Constant(type, 1)));
+                    mid_block_1.irst.add(new IRJump(next_block));
+
+                    now_block = rhs_block;
+                    now.rhs.accept(this);
+                    IRBlock mid_block_2 = new IRBlock(now_func.name + "_" + now_func.blocks.size());
+                    now_func.blocks.add(mid_block_2);
+                    now_block.irst.add(new IRJump(mid_block_2));
+                    mid_block_2.irst.add(new IRMove(now.val, now.rhs.val));
+                    mid_block_2.irst.add(new IRJump(next_block));
                 }
             }
-
-            now_block.irst.add(new IRJump(next_block));
             now_block = next_block;
         }
     }

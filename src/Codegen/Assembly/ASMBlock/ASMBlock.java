@@ -16,6 +16,6 @@ public class ASMBlock
 
     public String toString()
     {
-        return tag + ":";
+        return tag;
     }
 }

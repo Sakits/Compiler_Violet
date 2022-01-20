@@ -36,7 +36,7 @@ public class RegAlloc
             {
                 for (var inst : block.asm_ins)
                 {
-                    int phy_cnt = 0;
+                    
                     for (var x : inst.read_reg)
                     if (x instanceof VirReg)
                     {
@@ -46,8 +46,6 @@ public class RegAlloc
                             reg.addr.offset = new Immediate(offset);
                             offset += 4;
                         }
-                        reg.phy_reg = new PhyReg("s" + phy_cnt);
-                        phy_cnt++;
                     }
 
                     for (var x : inst.write_reg)
@@ -59,16 +57,20 @@ public class RegAlloc
                             reg.addr.offset = new Immediate(offset);
                             offset += 4;
                         }
-                        reg.phy_reg = new PhyReg("s" + phy_cnt);
-                        phy_cnt++;
                     }
                 }
             }
 
+            for (int i = 0; i < func.alloca.size(); i++)
+            {
+                func.alloca.get(i).offset.val = offset;
+                offset += 4;
+            }
+
             for (int i = 0; i < func.para.size(); i++)
             {
-                func.para.get(i).offset = new Immediate(offset);
-                offset += 4;
+                func.para.get(i).offset = new Immediate(offset + i * 4);
+                System.out.println(offset + i * 4);
             }
 
             for (var block : func.blocks)
@@ -87,11 +89,15 @@ public class RegAlloc
 
                 for (var inst : block.asm_ins)
                 {
+                    int phy_cnt = 0;
                     for (var x : inst.read_reg)
                     if (x instanceof VirReg)
                     {
-                        VirReg reg = (VirReg)x;
-                        new_ins.add(new ASMLoad(load_op_type.lw, reg.phy_reg, reg.addr));
+                        VirReg vir_reg = (VirReg)x;
+                        PhyReg phy_reg = new PhyReg("s" + phy_cnt);
+                        phy_cnt++;
+                        new_ins.add(new ASMLoad(load_op_type.lw, phy_reg, vir_reg.addr));
+                        inst.change((VirReg)x, phy_reg);
                     }
 
                     if (inst instanceof ASMRet)
@@ -109,9 +115,11 @@ public class RegAlloc
                     for (var x : inst.write_reg)
                     if (x instanceof VirReg)
                     {
-                        VirReg reg = (VirReg)x;
-                        assert reg.phy_reg != null;
-                        new_ins.add(new ASMStore(store_op_type.sw, reg.phy_reg, reg.addr));
+                        VirReg vir_reg = (VirReg)x;
+                        PhyReg phy_reg = new PhyReg("s" + phy_cnt);
+                        phy_cnt++;
+                        new_ins.add(new ASMStore(store_op_type.sw, phy_reg, vir_reg.addr));
+                        inst.change((VirReg)x, phy_reg);
                     }
                 }
 

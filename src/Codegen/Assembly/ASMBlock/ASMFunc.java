@@ -15,6 +15,7 @@ public class ASMFunc
     // StackFrame
     public ArrayList<ASMAddr> para = new ArrayList<>();
     public ArrayList< ArrayList<ASMAddr> > call = new ArrayList<>();
+    public ArrayList<ASMAddr> alloca = new ArrayList<>();
     
     public ASMFunc(String name)
     {
@@ -23,6 +24,6 @@ public class ASMFunc
 
     public String toString()
     {
-        return name + ":";
+        return name;
     }
 }

@@ -2,7 +2,7 @@ package Codegen.Assembly.ASMValue;
 
 public class ASMAddr 
 {
-    public ASMValue base;
+    public ASMReg base;
     public Immediate offset;
 
     public ASMAddr()
@@ -11,7 +11,7 @@ public class ASMAddr
         this.offset = null;
     }
     
-    public ASMAddr(ASMValue base, Immediate offset)
+    public ASMAddr(ASMReg base, Immediate offset)
     {
         this.base = base;
         this.offset = offset;
@@ -19,7 +19,9 @@ public class ASMAddr
 
     public String toString()
     {
-        assert offset != null;
+        // assert offset != null;
+        if (offset == null)
+            return "wait";
         return offset.toString() + "(" + base.toString() + ")";
     }
 }

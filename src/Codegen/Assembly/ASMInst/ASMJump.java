@@ -14,6 +14,6 @@ public class ASMJump extends ASMInst
 
     public String toString()
     {
-        return "j\t" + dest_block.toString();
+        return "j\t\t" + dest_block.toString();
     }
 }

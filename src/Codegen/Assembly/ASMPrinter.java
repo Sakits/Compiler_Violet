@@ -72,19 +72,19 @@ public class ASMPrinter
     {
         printer.println("\t.globl\t" + func.name);
         printer.println("\t.p2align\t2");
-        printer.println("\t.type\t" + func.name +",@function");
+        // printer.println("\t.type\t" + func.name +",@function");
 
-        printer.println(func.toString());
+        printer.println(func.toString() + ":");
 
         func.blocks.forEach(i -> visit(i));
 
-        printer.println("\t.size\t" + func.name + ", " + ".-" + func.name);
+        // printer.println("\t.size\t" + func.name + ", " + ".-" + func.name);
         // printer.println("");
     }
 
     public void visit(ASMBlock block)
     {
-        printer.println(block.toString());
+        printer.println(block.toString() + ":");
         block.asm_ins.forEach(i -> {
             printer.println("\t" + i.toString());
         });
