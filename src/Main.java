@@ -8,7 +8,7 @@ import Codegen.Assembly.ASMBuilder;
 import Codegen.Assembly.ASMPrinter;
 import Codegen.Assembly.RegAlloc;
 import Codegen.IR.IRBuilder;
-import Codegen.IR.IRPrinter;
+// import Codegen.IR.IRPrinter;
 
 import org.antlr.v4.runtime.CharStreams;
 // import org.antlr.v4.semantics.SymbolCollector;
@@ -27,9 +27,9 @@ public class Main
 {
     public static void main(String[] args) throws Exception
     {
-        String name = "test.mx";
-        InputStream input = new FileInputStream(name);
-        // InputStream input = System.in;
+        // String name = "test.mx";
+        // InputStream input = new FileInputStream(name);
+        InputStream input = System.in;
 
         try
         {
@@ -59,6 +59,16 @@ public class Main
 
             if (Semantic) return;
 
+            IRBuilder ir_builder = new IRBuilder();
+            ir_builder.visit(ast_root);
+            // new IRPrinter("test.ll", ir_builder.global);
+
+            ASMBuilder asm_builder = new ASMBuilder();
+            asm_builder.visit(ir_builder.global);
+            // new ASMPrinter("test.lts", asm_builder.global);
+
+            new RegAlloc(asm_builder.global);
+            new ASMPrinter("test.s", asm_builder.global);
         }
         catch (Error err) 
         {
