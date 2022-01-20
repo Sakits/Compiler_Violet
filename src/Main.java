@@ -59,16 +59,6 @@ public class Main
 
             if (Semantic) return;
 
-            IRBuilder ir_builder = new IRBuilder();
-            ir_builder.visit(ast_root);
-            // new IRPrinter("test.ll", ir_builder.global);
-
-            ASMBuilder asm_builder = new ASMBuilder();
-            asm_builder.visit(ir_builder.global);
-            // new ASMPrinter("test.lts", asm_builder.global);
-
-            new RegAlloc(asm_builder.global);
-            new ASMPrinter("test.s", asm_builder.global);
         }
         catch (Error err) 
         {
