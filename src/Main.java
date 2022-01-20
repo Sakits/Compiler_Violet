@@ -68,7 +68,7 @@ public class Main
             // new ASMPrinter("test.lts", asm_builder.global);
 
             new RegAlloc(asm_builder.global);
-            new ASMPrinter("test.s", asm_builder.global);
+            new ASMPrinter("output.s", asm_builder.global);
         }
         catch (Error err) 
         {
