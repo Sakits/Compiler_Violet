@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import Codegen.Assembly.ASMBlock.ASMBlock;
 import Codegen.Assembly.ASMBlock.ASMFunc;
 import Codegen.Assembly.ASMBlock.ASMGlobal;
+import Codegen.Assembly.ASMInst.ASMAlloca;
 import Codegen.Assembly.ASMInst.ASMBinary;
 import Codegen.Assembly.ASMInst.ASMBranch;
 import Codegen.Assembly.ASMInst.ASMCall;
@@ -170,7 +171,7 @@ public class ASMBuilder
         VirReg reg = new VirReg(((Register)now.dest).idt);
         reg.addr.offset = new Immediate(0);
         now_func.alloca.add(reg.addr);
-        now_block.asm_ins.add(new ASMBinary(binary_op_type.addi, get_reg(now.dest), reg.addr.base, reg.addr.offset));
+        now_block.asm_ins.add(new ASMAlloca(get_reg(now.dest), reg.addr));
     }
 
     public void visit(IRBinaryExpr now) 
@@ -222,7 +223,7 @@ public class ASMBuilder
                 if (now.rhs instanceof Constant)
                 {
                     int val = ((Constant) now.rhs).val;
-                    now_block.asm_ins.add(new ASMBinary(binary_op_type.slli, ans, lhs, new Immediate((-val))));
+                    now_block.asm_ins.add(new ASMBinary(binary_op_type.slli, ans, lhs, new Immediate((val))));
                 }
                 else
                     now_block.asm_ins.add(new ASMBinary(binary_op_type.sll, ans, lhs, get_reg(now.rhs)));
@@ -233,7 +234,7 @@ public class ASMBuilder
                 if (now.rhs instanceof Constant)
                 {
                     int val = ((Constant) now.rhs).val;
-                    now_block.asm_ins.add(new ASMBinary(binary_op_type.srai, ans, lhs, new Immediate((-val))));
+                    now_block.asm_ins.add(new ASMBinary(binary_op_type.srai, ans, lhs, new Immediate((val))));
                 }
                 else
                     now_block.asm_ins.add(new ASMBinary(binary_op_type.sra, ans, lhs, get_reg(now.rhs)));
@@ -244,7 +245,7 @@ public class ASMBuilder
                 if (now.rhs instanceof Constant)
                 {
                     int val = ((Constant) now.rhs).val;
-                    now_block.asm_ins.add(new ASMBinary(binary_op_type.andi, ans, lhs, new Immediate((-val))));
+                    now_block.asm_ins.add(new ASMBinary(binary_op_type.andi, ans, lhs, new Immediate((val))));
                 }
                 else
                     now_block.asm_ins.add(new ASMBinary(binary_op_type.and, ans, lhs, get_reg(now.rhs)));
@@ -255,7 +256,7 @@ public class ASMBuilder
                 if (now.rhs instanceof Constant)
                 {
                     int val = ((Constant) now.rhs).val;
-                    now_block.asm_ins.add(new ASMBinary(binary_op_type.ori, ans, lhs, new Immediate((-val))));
+                    now_block.asm_ins.add(new ASMBinary(binary_op_type.ori, ans, lhs, new Immediate((val))));
                 }
                 else
                     now_block.asm_ins.add(new ASMBinary(binary_op_type.or, ans, lhs, get_reg(now.rhs)));
@@ -266,7 +267,7 @@ public class ASMBuilder
                 if (now.rhs instanceof Constant)
                 {
                     int val = ((Constant) now.rhs).val;
-                    now_block.asm_ins.add(new ASMBinary(binary_op_type.xori, ans, lhs, new Immediate((-val))));
+                    now_block.asm_ins.add(new ASMBinary(binary_op_type.xori, ans, lhs, new Immediate((val))));
                 }
                 else
                     now_block.asm_ins.add(new ASMBinary(binary_op_type.xor, ans, lhs, get_reg(now.rhs)));

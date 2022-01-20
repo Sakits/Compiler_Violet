@@ -1009,33 +1009,34 @@ public class IRBuilder extends ASTVisitor
     {
         now.obj.accept(this);
 
-        IRValue val = now.obj.val;
+        now.val = now.obj.val;
         IRType type = types.get(now.type);
+        IRValue val;
         binary_op_type op;
         switch (now.op)
         {
             case "++" :
-                if (val instanceof Constant)
-                    now.val = new Constant(type, ((Constant)val).val + 1);
+                if (now.val instanceof Constant)
+                    val = new Constant(type, ((Constant)now.val).val + 1);
                 else
                 {
                     op = binary_op_type.add;
-                    now.val = new Register(type, false, "pre_add", reg_cnt++);
-                    now_block.irst.add(new IRBinaryExpr(now.val, op, val, new Constant(type, 1)));
+                    val = new Register(type, false, "pre_add", reg_cnt++);
+                    now_block.irst.add(new IRBinaryExpr(val, op, now.val, new Constant(type, 1)));
                 }
-                now_block.irst.add(new IRStore(now.obj.ptr, now.val));
+                now_block.irst.add(new IRStore(now.obj.ptr, val));
                 break;
             
             case "--" :
-                if (val instanceof Constant)
-                    now.val = new Constant(type, ((Constant)val).val - 1);
+                if (now.val instanceof Constant)
+                    val = new Constant(type, ((Constant)now.val).val - 1);
                 else
                 {
                     op = binary_op_type.sub;
-                    now.val = new Register(type, false, "pre_sub", reg_cnt++);
-                    now_block.irst.add(new IRBinaryExpr(now.val, op, val, new Constant(type, 1)));
+                    val = new Register(type, false, "pre_sub", reg_cnt++);
+                    now_block.irst.add(new IRBinaryExpr(val, op, now.val, new Constant(type, 1)));
                 }
-                now_block.irst.add(new IRStore(now.obj.ptr, now.val));
+                now_block.irst.add(new IRStore(now.obj.ptr, val));
                 break;
         }
     }

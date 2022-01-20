@@ -8,7 +8,7 @@ import Codegen.Assembly.ASMBuilder;
 import Codegen.Assembly.ASMPrinter;
 import Codegen.Assembly.RegAlloc;
 import Codegen.IR.IRBuilder;
-// import Codegen.IR.IRPrinter;
+import Codegen.IR.IRPrinter;
 
 import org.antlr.v4.runtime.CharStreams;
 // import org.antlr.v4.semantics.SymbolCollector;
