@@ -35,7 +35,11 @@ public class Main
         {
             boolean Semantic = false;
             if (args.length > 0) 
-                Semantic = true;
+            {
+                for (String arg : args)
+                if (arg.equals("-Semantic"))
+                    Semantic = true;
+            }
 
             MxstarLexer lexer = new MxstarLexer(CharStreams.fromStream(input));
             lexer.removeErrorListeners();
