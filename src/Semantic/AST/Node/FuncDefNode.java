@@ -8,7 +8,7 @@ public class FuncDefNode extends ASTNode
 {
     public String return_type, idt;
     public int dim;
-    public ArrayList<FuncVarDefNode> var = new ArrayList<>();
+    public ArrayList<FuncVarDefNode> var_list = new ArrayList<>();
     public StNode st;
     public boolean is_returned = false;
     public ClassDefNode belong = null;

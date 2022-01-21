@@ -15,7 +15,7 @@ public class IRJump extends IRStat
 
     public String toString()
     {
-        return "br label %" + dest_block.tag;
+        return "jp " + dest_block.tag;
     }
 
     public void accept(ASMBuilder visitor)

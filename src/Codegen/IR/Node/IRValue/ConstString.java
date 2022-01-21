@@ -25,10 +25,8 @@ public class ConstString extends IRValue
 
     public String declare()
     {
-        String ans = "@str_" + num + " = ";
-        ans += "private unnamed_addr constant ";
-        ans += "[" + s.length() + " x i8] ";
-        ans += "c\"" + s.replace("\\", "\\5C").replace("\n", "\\0A").replace("\"", "\\22").replace("\0", "\\00")+ "\"";
+        String ans = "@str_" + num + " = global i8* ";
+        ans += "\"" + s.replace("\\", "\\5C").replace("\n", "\\0A").replace("\"", "\\22").replace("\0", "\\00")+ "\"";
         return ans;
     }
 }

@@ -16,7 +16,7 @@ public class IRMove extends IRStat
 
     public String toString()
     {
-        return dest + " = and i1 " + src + ", 1";
+        return "move " + dest.toString() + ", " + src.toString();
     }
 
     public void accept(ASMBuilder visitor)

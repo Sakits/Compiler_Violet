@@ -4,13 +4,13 @@ import Codegen.Assembly.ASMBuilder;
 import Codegen.IR.Node.IRType.IRPointer;
 import Codegen.IR.Node.IRValue.IRValue;
 
-public class IRGetelementptr extends IRStat
+public class IRGet extends IRStat
 {
     public IRValue dest, ptr;
     public IRValue offset;
     public Boolean is_class = false;
 
-    public IRGetelementptr(IRValue dest, IRValue ptr, IRValue offset, Boolean is_class)
+    public IRGet(IRValue dest, IRValue ptr, IRValue offset, Boolean is_class)
     {
         super();
         this.dest = dest;
@@ -22,12 +22,9 @@ public class IRGetelementptr extends IRStat
 
     public String toString()
     {
-        IRPointer tmp = (IRPointer) ptr.type;
-        return dest.toString() + " = getelementptr "
-             + (new IRPointer(tmp.dim - 1, tmp.basic_type)).toString() + ", "
-             + ptr.type.toString() + " " + ptr.toString() + ", "
-             + (is_class ? "i32 0, " : "")
-             + "i32 " + offset.toString();
+        return dest.toString() + " = get "
+             + ptr.toString() + ", "
+             + offset.toString();
     }
 
     public void accept(ASMBuilder visitor)

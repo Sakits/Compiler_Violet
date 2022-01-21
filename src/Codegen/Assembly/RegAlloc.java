@@ -1,9 +1,9 @@
 package Codegen.Assembly;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import Codegen.Assembly.ASMBlock.ASMGlobal;
-import Codegen.Assembly.ASMInst.ASMAlloca;
 import Codegen.Assembly.ASMInst.ASMBinary;
 import Codegen.Assembly.ASMInst.ASMInst;
 import Codegen.Assembly.ASMInst.ASMLi;
@@ -90,12 +90,18 @@ public class RegAlloc
 
                 for (var inst : block.asm_ins)
                 {
+                    HashMap<VirReg, PhyReg> mp = new HashMap<>();
                     int phy_cnt = 0;
                     for (var x : inst.read_reg)
                     if (x instanceof VirReg)
                     {
                         VirReg vir_reg = (VirReg)x;
-                        PhyReg phy_reg = new PhyReg("s" + phy_cnt);
+                        PhyReg phy_reg;
+                        if (mp.containsKey(vir_reg))
+                            phy_reg = mp.get(vir_reg);
+                        else
+                            mp.put(vir_reg, phy_reg = new PhyReg("s" + phy_cnt));
+
                         phy_cnt++;
                         inst.change((VirReg)x, phy_reg);
 
@@ -121,30 +127,19 @@ public class RegAlloc
                             new_ins.add(new ASMBinary(binary_op_type.add, new PhyReg("sp"), new PhyReg("sp"), new PhyReg("s0")));
                         }
                     }
-
-                    if (inst instanceof ASMAlloca)
-                    {
-                        ASMAlloca alloca = (ASMAlloca) inst;
-                        ASMInst tmp;
-                        if (alloca.addr.offset.val < 2048)
-                            new_ins.add(tmp = new ASMBinary(binary_op_type.addi, alloca.dest, alloca.addr.base, alloca.addr.offset));
-                        else
-                        {
-                            PhyReg phy_reg = new PhyReg("s" + phy_cnt);
-                            phy_cnt++;
-                            new_ins.add(new ASMLi(phy_reg, alloca.addr.offset));
-                            new_ins.add(tmp = new ASMBinary(binary_op_type.add, alloca.dest, alloca.addr.base, phy_reg));
-                        }
-                        inst = tmp;
-                    }
-                    else
-                        new_ins.add(inst);
+                    
+                    new_ins.add(inst);
 
                     for (var x : inst.write_reg)
                     if (x instanceof VirReg)
                     {
                         VirReg vir_reg = (VirReg)x;
-                        PhyReg phy_reg = new PhyReg("s" + phy_cnt);
+                        PhyReg phy_reg;
+                        if (mp.containsKey(vir_reg))
+                            phy_reg = mp.get(vir_reg);
+                        else
+                            mp.put(vir_reg, phy_reg = new PhyReg("s" + phy_cnt));
+                        
                         phy_cnt++;
                         inst.change((VirReg)x, phy_reg);
 

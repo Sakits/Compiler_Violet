@@ -19,9 +19,7 @@ public class IRLoad extends IRStat
 
     public String toString()
     {
-        return dest.toString() + " = load "
-             + type.toString() + ", "
-             + ptr.type.toString() + " " + ptr.toString();
+        return dest.toString() + " = load " + ptr.toString();
     }
 
     public void accept(ASMBuilder visitor)

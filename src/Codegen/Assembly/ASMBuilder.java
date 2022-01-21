@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import Codegen.Assembly.ASMBlock.ASMBlock;
 import Codegen.Assembly.ASMBlock.ASMFunc;
 import Codegen.Assembly.ASMBlock.ASMGlobal;
-import Codegen.Assembly.ASMInst.ASMAlloca;
 import Codegen.Assembly.ASMInst.ASMBinary;
 import Codegen.Assembly.ASMInst.ASMBranch;
 import Codegen.Assembly.ASMInst.ASMCall;
@@ -140,7 +139,7 @@ public class ASMBuilder
             i.block = new ASMBlock("." + i.tag);
             now_func.blocks.add(i.block);
         });
-        now_block = now.init_block.block;
+        now_block = now.blocks.get(0).block;
 
         VirReg ra_store = new VirReg("ra_store");
         now_func.ra = ra_store;
@@ -164,14 +163,6 @@ public class ASMBuilder
         now_block = now.block;
         now.irst.forEach(i -> i.accept(this));
         now_block = null;
-    }
-
-    public void visit(IRAlloca now) 
-    {
-        VirReg reg = new VirReg(((Register)now.dest).idt);
-        reg.addr.offset = new Immediate(0);
-        now_func.alloca.add(reg.addr);
-        now_block.asm_ins.add(new ASMAlloca(get_reg(now.dest), reg.addr));
     }
 
     public void visit(IRBinaryExpr now) 
@@ -275,11 +266,6 @@ public class ASMBuilder
         }
     }
 
-    public void visit(IRBitcast now) 
-    {
-        now_block.asm_ins.add(new ASMMv(get_reg(now.dest), get_reg(now.val)));
-    }
-
     public void visit(IRBranch now) 
     {
         now_block.asm_ins.add(new ASMBranch(branch_op_type.beqz, get_reg(now.cond), null, now.false_block.block));
@@ -368,7 +354,7 @@ public class ASMBuilder
         }
     }
 
-    public void visit(IRGetelementptr now) 
+    public void visit(IRGet now) 
     {
         ASMReg ans = get_reg(now.dest);
 
@@ -452,11 +438,6 @@ public class ASMBuilder
             now_block.asm_ins.add(new ASMStore(store_op_type.sb, val, new ASMAddr(addr, new Immediate(0))));
         else
             now_block.asm_ins.add(new ASMStore(store_op_type.sw, val, new ASMAddr(addr, new Immediate(0))));
-    }
-
-    public void visit(IRPhi now) 
-    {
-        assert false;
     }
 
     public void visit(IRMove now)

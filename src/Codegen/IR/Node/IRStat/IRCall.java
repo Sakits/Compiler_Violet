@@ -27,12 +27,13 @@ public class IRCall extends IRStat
             s = dest.toString() + " = call ";
         else
             s = "call ";
-        s += func.return_type.toString() + " @" + func.name;
+        s += "@" + func.name;
         s += "(";
         for (int i = 0; i < para.size(); i++)
-            s += para.get(i).type.toString() + " " 
-            + para.get(i).toString() 
+        {
+            s += para.get(i).toString() 
             + (i == para.size() - 1 ? "" : ", ");
+        }
         s += ")";
         return s;
     }

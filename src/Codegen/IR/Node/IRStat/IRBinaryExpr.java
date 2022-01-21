@@ -22,7 +22,7 @@ public class IRBinaryExpr extends IRStat
     @Override public String toString()
     {
         return dest.toString() + " = " 
-             + op.toString() + " " + this.lhs.type.toString() + " "
+             + op.toString() + " " 
              + this.lhs.toString() + ", " + this.rhs.toString();
     }
 

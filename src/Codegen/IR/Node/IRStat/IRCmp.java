@@ -20,9 +20,8 @@ public class IRCmp extends IRStat
 
     public String toString()
     {
-        return dest.toString() + " = icmp "
+        return dest.toString() + " = cmp "
              + op.toString() + " "
-             + lhs.type.toString() + " "
              + lhs.toString() + ", "
              + rhs.toString();
     }

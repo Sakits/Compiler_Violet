@@ -14,7 +14,6 @@ public class IRFunc
     public ArrayList<IRValue> para = new ArrayList<>();
     public String name;
     public IRType return_type;
-    public IRBlock init_block;
     public Register thisptr = null;
     public Boolean is_builtin = false;
 
@@ -25,8 +24,6 @@ public class IRFunc
     {
         this.return_type = return_type;
         this.name = name;
-        this.init_block = new IRBlock(name + "_init");
-        blocks.add(this.init_block);
     }
 
     public String toString()
@@ -47,7 +44,9 @@ public class IRFunc
         s += return_type.toString() + " @";
         s += name + "(";
         for (int i = 0; i < para.size(); i++)
-            s += para.get(i).type.toString() + " " + para.get(i).toString() + (i != para.size() - 1 ? ", " : "");
+            s += para.get(i).type.toString() + " " 
+              + para.get(i).toString() 
+              + (i != para.size() - 1 ? ", " : "");
         s += ")";
         return s;
     }

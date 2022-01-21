@@ -7,7 +7,7 @@ import Utils.position;
 
 public class LambdaExprNode extends ExprNode
 {
-    public ArrayList<FuncVarDefNode> var = new ArrayList<>();
+    public ArrayList<FuncVarDefNode> var_list = new ArrayList<>();
     public ArrayList<ExprNode> para = new ArrayList<>();
     public StNode st;
 

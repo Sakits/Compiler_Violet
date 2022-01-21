@@ -28,11 +28,11 @@ public class SemanticChecker extends ASTVisitor
 
     public void visit(RootNode now)
     {
-        now.var.forEach(i -> i.accept(this));
-        now.cls.forEach(i -> i.accept(this));
+        now.var_list.forEach(i -> i.accept(this));
+        now.cls_list.forEach(i -> i.accept(this));
 
         boolean flag = false;
-        for (var func : now.func)
+        for (var func : now.func_list)
         {
             if (func.idt.equals("main"))
             {
@@ -41,22 +41,22 @@ public class SemanticChecker extends ASTVisitor
                 flag = true;
                 if (!func.return_type.equals("int"))
                     throw new SemanticError(func.pos, "Wrong main type");
-                if (func.var.size() != 0)
+                if (func.var_list.size() != 0)
                     throw new SemanticError(func.pos, "main() has para");
             }
         }
         if (flag == false)
             throw new SemanticError(now.pos, "lack of main()");
 
-        now.func.forEach(i -> i.accept(this));
+        now.func_list.forEach(i -> i.accept(this));
     }
 
     public void visit(ClassDefNode now)
     {
         now_class = now;
         now_scope = new Scope(now_scope);
-        now.var.forEach(i -> i.accept(this));
-        now.func.forEach(i -> i.accept(this));
+        now.var_list.forEach(i -> i.accept(this));
+        now.func_list.forEach(i -> i.accept(this));
         now_scope = now_scope.fa_scope;
         now_class = null;
     }
@@ -68,7 +68,7 @@ public class SemanticChecker extends ASTVisitor
 
         now_scope = new Scope(now_scope);
         now_func.add(now);
-        now.var.forEach(i -> i.accept(this));  
+        now.var_list.forEach(i -> i.accept(this));  
         if (now.st != null) 
             now.st.accept(this);
 
@@ -97,7 +97,6 @@ public class SemanticChecker extends ASTVisitor
             {
                 if (now_class != null && now_func().idt.equals(now_class.idt))
                     throw new SemanticError(now.pos, "cannot return any value in a constructor");
-                // now.expr.accept(this);
                 if (!now.expr.type.equals("null") && !now.expr.type.equals(now_func().return_type))
                     throw new SemanticError(now.pos, "return type not match");
                 if (!now.expr.type.equals("null") && now.expr.dim != now_func().dim)
@@ -140,7 +139,7 @@ public class SemanticChecker extends ASTVisitor
         if (symbols.get_type(now.type) == null)
             throw new SemanticError(now.pos, "no such type " + now.type);
 
-        for (var i : now.var)
+        for (var i : now.var_list)
         {
             i.accept(this);
             i.type = now.type;
@@ -159,7 +158,7 @@ public class SemanticChecker extends ASTVisitor
             now.init_val.accept(this);
         
         now_scope.add_var(now.idt, now);
-        if (now_class != null)
+        if (now_class != null && now_func.size() == 0)
         {
             now.belong = now_class;
             now.offset = now_class.now_offset++;
@@ -303,25 +302,25 @@ public class SemanticChecker extends ASTVisitor
         
         FuncDefNode func = null;
         if (now.obj.is_class != null)
-            func = now.obj.is_class.func.get(0);
+            func = now.obj.is_class.func_list.get(0);
         else
             func = now.obj.is_func;
-        if (func.var.size() != now.para.size())
+        if (func.var_list.size() != now.para.size())
             throw new SemanticError(now.pos, "para number not match");
 
         now.func = func;
 
         now.para.forEach(i -> i.accept(this));
-        for (var i = 0; i < func.var.size(); i++)
+        for (var i = 0; i < func.var_list.size(); i++)
         {
             if (now.para.get(i).is_class != null)
                 throw new SemanticError(now.para.get(i).pos, "para " + i + " is class");
             if (now.para.get(i).is_left_val == false && now.para.get(i).is_func != null)
                 throw new SemanticError(now.para.get(i).pos, "para " + i + " is func");
 
-            if (!now.para.get(i).type.equals("null") && !func.var.get(i).type.equals(now.para.get(i).type))
+            if (!now.para.get(i).type.equals("null") && !func.var_list.get(i).type.equals(now.para.get(i).type))
                 throw new SemanticError(now.pos, "para " + i + " type not match");
-            if (!now.para.get(i).type.equals("null") && func.var.get(i).dim != now.para.get(i).dim)
+            if (!now.para.get(i).type.equals("null") && func.var_list.get(i).dim != now.para.get(i).dim)
                 throw new SemanticError(now.pos, "para " + i + " dimension not match");
         }
 
@@ -571,24 +570,24 @@ public class SemanticChecker extends ASTVisitor
 
     public void visit(LambdaExprNode now)
     {
-        if (now.var.size() != now.para.size())
+        if (now.var_list.size() != now.para.size())
             throw new SemanticError(now.pos, "para number not match");
 
         now_scope = new Scope(now_scope);
 
-        now.var.forEach(i -> i.accept(this));
+        now.var_list.forEach(i -> i.accept(this));
         now.para.forEach(i -> i.accept(this));
      
-        for (var i = 0; i < now.var.size(); i++)
+        for (var i = 0; i < now.var_list.size(); i++)
         {
             if (now.para.get(i).is_class != null)
                 throw new SemanticError(now.para.get(i).pos, "para " + i + " is class");
             if (now.para.get(i).is_left_val == false && now.para.get(i).is_func != null)
                 throw new SemanticError(now.para.get(i).pos, "para " + i + " is func");
 
-            if (!now.para.get(i).type.equals("null") && !now.var.get(i).type.equals(now.para.get(i).type))
+            if (!now.para.get(i).type.equals("null") && !now.var_list.get(i).type.equals(now.para.get(i).type))
                 throw new SemanticError(now.pos, "para " + i + " type not match");
-            if (!now.para.get(i).type.equals("null") && now.var.get(i).dim != now.para.get(i).dim)
+            if (!now.para.get(i).type.equals("null") && now.var_list.get(i).dim != now.para.get(i).dim)
                 throw new SemanticError(now.pos, "para " + i + " dimension not match");
         }
 

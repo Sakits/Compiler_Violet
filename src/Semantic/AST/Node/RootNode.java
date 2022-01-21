@@ -6,9 +6,9 @@ import Utils.position;
 
 public class RootNode extends ASTNode
 {
-    public ArrayList<FuncDefNode> func = new ArrayList<>();
-    public ArrayList<VarDefNode> var = new ArrayList<>();
-    public ArrayList<ClassDefNode> cls = new ArrayList<>();
+    public ArrayList<FuncDefNode> func_list = new ArrayList<>();
+    public ArrayList<VarDefNode> var_list = new ArrayList<>();
+    public ArrayList<ClassDefNode> cls_list = new ArrayList<>();
 
     public RootNode(position pos)
     {

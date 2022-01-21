@@ -19,9 +19,9 @@ public class IRBranch extends IRStat
 
     @Override public String toString()
     {
-        return "br i1 " + this.cond.toString() + ", "
-             + "label %" + this.true_block.tag + ", "
-             + "label %" + this.false_block.tag;
+        return "br " + this.cond.toString() + ", "
+             + this.true_block.tag + ", "
+             + this.false_block.tag;
     }
 
     public void accept(ASMBuilder visitor)

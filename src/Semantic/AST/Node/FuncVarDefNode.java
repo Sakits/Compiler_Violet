@@ -9,7 +9,7 @@ public class FuncVarDefNode extends ASTNode
     public String type;
     public int dim;
     public OneVarDefNode one_var;
-    public Register ptr, val;
+    public Register val;
 
     public FuncVarDefNode(position pos, String type, int dim, OneVarDefNode one_var)
     {

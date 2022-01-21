@@ -15,7 +15,7 @@ public class IRRet extends IRStat
 
     public String toString()
     {
-        return "ret " + val.type.toString() + " " + val.toString();
+        return "ret " + val.toString();
     }
 
     public void accept(ASMBuilder visitor)

@@ -1,7 +1,6 @@
 package Codegen.IR.Node.IRStat;
 
 import Codegen.Assembly.ASMBuilder;
-import Codegen.IR.Node.IRType.IRPointer;
 import Codegen.IR.Node.IRValue.IRValue;
 
 public class IRStore extends IRStat
@@ -17,10 +16,7 @@ public class IRStore extends IRStat
 
     public String toString()
     {
-        IRPointer type = (IRPointer)ptr.type;
-        type = new IRPointer(type.dim - 1, type.basic_type);
-        return "store " + type.toString() + " " + val.toString() + ", "
-             + ptr.type.toString() + " " + ptr.toString();
+        return "store " + val.toString() + ", " + ptr.toString();
     }
     
     public void accept(ASMBuilder visitor)

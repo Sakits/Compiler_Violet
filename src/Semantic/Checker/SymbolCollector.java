@@ -27,21 +27,21 @@ public class SymbolCollector extends ASTVisitor
 
         ClassDefNode Str = new ClassDefNode(new position(), "string");
 
-        Str.func.add(new FuncDefNode(new position(), 0, "int", "length", null, true));
+        Str.func_list.add(new FuncDefNode(new position(), 0, "int", "length", null, true));
 
         FuncDefNode substring = new FuncDefNode(new position(), 0, "string", "substring", null, true);
         FuncVarDefNode left = new FuncVarDefNode(new position(), "int", 0, new OneVarDefNode(new position(), "left", null));
         FuncVarDefNode right = new FuncVarDefNode(new position(), "int", 0, new OneVarDefNode(new position(), "right", null));
-        substring.var.add(left);
-        substring.var.add(right);
-        Str.func.add(substring);
+        substring.var_list.add(left);
+        substring.var_list.add(right);
+        Str.func_list.add(substring);
 
-        Str.func.add(new FuncDefNode(new position(), 0, "int", "parseInt", null, true));
+        Str.func_list.add(new FuncDefNode(new position(), 0, "int", "parseInt", null, true));
 
         FuncDefNode ord = new FuncDefNode(new position(), 0, "int", "ord", null, true);
         FuncVarDefNode pos = new FuncVarDefNode(new position(), "int", 0, new OneVarDefNode(new position(), "pos", null));
-        ord.var.add(pos);
-        Str.func.add(ord);
+        ord.var_list.add(pos);
+        Str.func_list.add(ord);
 
         now_class = Str;
         Str.accept(this);
@@ -56,22 +56,22 @@ public class SymbolCollector extends ASTVisitor
         
         FuncVarDefNode printpara = new FuncVarDefNode(new position(), "string", 0, new OneVarDefNode(new position(), "str", null));
         FuncDefNode print = new FuncDefNode(new position(), 0, "void", "print", null);
-        print.var.add(printpara);
+        print.var_list.add(printpara);
         print.accept(this);
 
         FuncVarDefNode printlnpara = new FuncVarDefNode(new position(), "string", 0, new OneVarDefNode(new position(), "str", null));
         FuncDefNode println = new FuncDefNode(new position(), 0, "void", "println", null);
-        println.var.add(printlnpara);
+        println.var_list.add(printlnpara);
         println.accept(this);
 
         FuncVarDefNode printIntpara = new FuncVarDefNode(new position(), "int", 0, new OneVarDefNode(new position(), "n", null));
         FuncDefNode printInt = new FuncDefNode(new position(), 0, "void", "printInt", null);
-        printInt.var.add(printIntpara);
+        printInt.var_list.add(printIntpara);
         printInt.accept(this);
 
         FuncVarDefNode printlnIntpara = new FuncVarDefNode(new position(), "int", 0, new OneVarDefNode(new position(), "n", null));
         FuncDefNode printlnInt = new FuncDefNode(new position(), 0, "void", "printlnInt", null);
-        printlnInt.var.add(printlnIntpara);
+        printlnInt.var_list.add(printlnIntpara);
         printlnInt.accept(this);
 
         FuncDefNode getString = new FuncDefNode(new position(), 0, "string", "getString", null, true);
@@ -82,7 +82,7 @@ public class SymbolCollector extends ASTVisitor
 
         FuncVarDefNode toStringpara = new FuncVarDefNode(new position(), "int", 0, new OneVarDefNode(new position(), "i", null));
         FuncDefNode toString = new FuncDefNode(new position(), 0, "string", "toString", null, true);
-        toString.var.add(toStringpara);
+        toString.var_list.add(toStringpara);
         toString.accept(this);
 
         FuncDefNode size = new FuncDefNode(new position(), 0, "int", "__builtin_size", null);
@@ -92,8 +92,8 @@ public class SymbolCollector extends ASTVisitor
     @Override
     public void visit(RootNode now)
     {
-        now.cls.forEach(i -> i.accept(this));
-        now.func.forEach(i -> i.accept(this));   
+        now.cls_list.forEach(i -> i.accept(this));
+        now.func_list.forEach(i -> i.accept(this));   
     }
 
     @Override 
@@ -135,15 +135,15 @@ public class SymbolCollector extends ASTVisitor
 
         symbols.add_type(now.idt, now);
         now_class = now;
-        now.var.forEach(i -> i.accept(this));
-        now.func.forEach(i -> i.accept(this));
+        now.var_list.forEach(i -> i.accept(this));
+        now.func_list.forEach(i -> i.accept(this));
         now_class = null;
     }
 
     @Override
     public void visit(VarDefNode now)
     {
-        for (var i : now.var)
+        for (var i : now.var_list)
         {
             if (now_class.vars.containsKey(i.idt))
                 throw new SemanticError(now.pos, "member variable " + i.idt + " has been defined");

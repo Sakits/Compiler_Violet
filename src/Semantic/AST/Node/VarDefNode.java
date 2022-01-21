@@ -8,7 +8,7 @@ public class VarDefNode extends StNode
 {
     public String type;
     public int dim;
-    public ArrayList<OneVarDefNode> var = new ArrayList<>();
+    public ArrayList<OneVarDefNode> var_list = new ArrayList<>();
 
     public VarDefNode(position pos, String type, int dim)
     {

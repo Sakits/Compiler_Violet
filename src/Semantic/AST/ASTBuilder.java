@@ -43,11 +43,11 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode>
         RootNode now = new RootNode(new position(ctx));
 
         if (ctx.functionDef() != null)
-            ctx.functionDef().forEach(i -> now.func.add((FuncDefNode) visit(i)));
+            ctx.functionDef().forEach(i -> now.func_list.add((FuncDefNode) visit(i)));
         if (ctx.classDef() != null)
-            ctx.classDef().forEach(i -> now.cls.add((ClassDefNode) visit(i)));
+            ctx.classDef().forEach(i -> now.cls_list.add((ClassDefNode) visit(i)));
         if (ctx.varDef() != null)
-            ctx.varDef().forEach(i -> now.var.add((VarDefNode) visit(i)));
+            ctx.varDef().forEach(i -> now.var_list.add((VarDefNode) visit(i)));
 
         return now;
     }
@@ -61,20 +61,19 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode>
             for (var i : ctx.constructFuncDef())
             {
                 FuncDefNode func = (FuncDefNode) visit(i);
-                // func.return_type = ctx.Identifier().getText();
-                now.func.add(func);
+                now.func_list.add(func);
             }
         }
         else
         {
             SuiteNode st = new SuiteNode(new position(ctx));
             FuncDefNode func = new FuncDefNode(new position(ctx), 0, ctx.Identifier().getText(), ctx.Identifier().getText(), st);
-            now.func.add(func);
+            now.func_list.add(func);
         }
         if (ctx.functionDef() != null)
-            ctx.functionDef().forEach(i -> now.func.add((FuncDefNode) visit(i)));
+            ctx.functionDef().forEach(i -> now.func_list.add((FuncDefNode) visit(i)));
         if (ctx.varDef() != null)
-            ctx.varDef().forEach(i -> now.var.add((VarDefNode) visit(i)));
+            ctx.varDef().forEach(i -> now.var_list.add((VarDefNode) visit(i)));
 
         return now;
     }
@@ -85,7 +84,7 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode>
         String return_type = ctx.returnType().getText();
         FuncDefNode now = new FuncDefNode(new position(ctx), get_dim(return_type), get_type(return_type), ctx.Identifier().getText(), st);
         if (ctx.funcVarDef() != null)
-            ctx.funcVarDef().forEach(i -> now.var.add((FuncVarDefNode) visit(i)));
+            ctx.funcVarDef().forEach(i -> now.var_list.add((FuncVarDefNode) visit(i)));
 
         return now;
     }
@@ -95,7 +94,7 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode>
         StNode st = (StNode) visit(ctx.suite());
         FuncDefNode now = new FuncDefNode(new position(ctx), 0, null, ctx.Identifier().getText(), st);
         if (ctx.funcVarDef() != null)
-            ctx.funcVarDef().forEach(i -> now.var.add((FuncVarDefNode) visit(i)));
+            ctx.funcVarDef().forEach(i -> now.var_list.add((FuncVarDefNode) visit(i)));
 
         return now;
     }
@@ -179,7 +178,7 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode>
         String type = ctx.varType().getText();
         VarDefNode now = new VarDefNode(new position(ctx), get_type(type), get_dim(type));
         if (ctx.oneVarDef() != null)
-            ctx.oneVarDef().forEach(i -> now.var.add((OneVarDefNode) visit(i)));
+            ctx.oneVarDef().forEach(i -> now.var_list.add((OneVarDefNode) visit(i)));
 
         return now;
     }
@@ -340,7 +339,7 @@ public class ASTBuilder extends MxstarBaseVisitor<ASTNode>
     @Override public ASTNode visitLambdaFunc(MxstarParser.LambdaFuncContext ctx)
     {
         LambdaExprNode now = new LambdaExprNode(new position(ctx), (StNode) visit(ctx.suite()));
-        ctx.funcVarDef().forEach(i -> now.var.add((FuncVarDefNode) visit(i)));
+        ctx.funcVarDef().forEach(i -> now.var_list.add((FuncVarDefNode) visit(i)));
         ctx.expression().forEach(i -> now.para.add((ExprNode) visit(i)));
 
         return now;

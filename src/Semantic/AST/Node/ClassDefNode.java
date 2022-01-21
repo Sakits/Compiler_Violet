@@ -9,8 +9,8 @@ import Utils.position;
 public class ClassDefNode extends ASTNode
 {
     public String idt;
-    public ArrayList<FuncDefNode> func = new ArrayList<>();
-    public ArrayList<VarDefNode> var = new ArrayList<>();
+    public ArrayList<FuncDefNode> func_list = new ArrayList<>();
+    public ArrayList<VarDefNode> var_list = new ArrayList<>();
     public HashMap<String, FuncDefNode> funcs = new HashMap<>();
     public HashMap<String, OneVarDefNode> vars = new HashMap<>();
     public Integer now_offset = 0;

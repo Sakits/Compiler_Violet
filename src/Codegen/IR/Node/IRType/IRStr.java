@@ -12,6 +12,6 @@ public class IRStr extends IRType
 
     public String toString()
     {
-        return "[" + len + " x i8]";
+        return "i8*";
     }
 }

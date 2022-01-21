@@ -16,7 +16,6 @@ public class Scope
 
     public void add_var(String idt, OneVarDefNode var)
     {
-        // System.out.println("insert : " + idt);
         vars.put(idt, var);
     }
 
