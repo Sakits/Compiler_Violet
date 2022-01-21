@@ -39,11 +39,6 @@ define i32 @foo(i32 %a)
 
 ### Statement
 
-#### alloca
-
-`%local_variable = alloca i32`
-
-
 #### global variable
 
 `@global_variable = global i32 0`
