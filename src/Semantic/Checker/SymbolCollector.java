@@ -109,8 +109,8 @@ public class SymbolCollector extends ASTVisitor
         {
             now.belong = now_class;
             
-            if (now.idt.equals("main"))
-                throw new SemanticError(now.pos, "Duplicated name for main");
+            // if (now.idt.equals("main"))
+            //     throw new SemanticError(now.pos, "Duplicated name for main");
 
             if (now_class.funcs.containsKey(now.idt))
                 throw new SemanticError(now.pos, "member function " + now.idt + " has been defined");
