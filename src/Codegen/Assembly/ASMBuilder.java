@@ -165,6 +165,8 @@ public class ASMBuilder
         now_block = null;
     }
 
+    void 
+
     public void visit(IRBinaryExpr now) 
     {
         ASMReg lhs = get_reg(now.lhs);
@@ -174,23 +176,23 @@ public class ASMBuilder
         {
             case add ->
             {
-                if (now.rhs instanceof Constant)
-                {
-                    int val = ((Constant) now.rhs).val;
-                    now_block.asm_ins.add(new ASMBinary(binary_op_type.addi, ans, lhs, new Immediate((val))));
-                }
-                else
+                // if (now.rhs instanceof Constant)
+                // {
+                //     int val = ((Constant) now.rhs).val;
+                //     now_block.asm_ins.add(new ASMBinary(binary_op_type.addi, ans, lhs, new Immediate((val))));
+                // }
+                // else
                     now_block.asm_ins.add(new ASMBinary(binary_op_type.add, ans, lhs, get_reg(now.rhs)));
             }
 
             case sub ->
             {
-                if (now.rhs instanceof Constant)
-                {
-                    int val = ((Constant) now.rhs).val;
-                    now_block.asm_ins.add(new ASMBinary(binary_op_type.addi, ans, lhs, new Immediate((-val))));
-                }
-                else
+                // if (now.rhs instanceof Constant)
+                // {
+                //     int val = ((Constant) now.rhs).val;
+                //     now_block.asm_ins.add(new ASMBinary(binary_op_type.addi, ans, lhs, new Immediate((-val))));
+                // }
+                // else
                     now_block.asm_ins.add(new ASMBinary(binary_op_type.sub, ans, lhs, get_reg(now.rhs)));
             }
 
@@ -211,56 +213,56 @@ public class ASMBuilder
 
             case shl ->
             {
-                if (now.rhs instanceof Constant)
-                {
-                    int val = ((Constant) now.rhs).val;
-                    now_block.asm_ins.add(new ASMBinary(binary_op_type.slli, ans, lhs, new Immediate((val))));
-                }
-                else
+                // if (now.rhs instanceof Constant)
+                // {
+                //     int val = ((Constant) now.rhs).val;
+                //     now_block.asm_ins.add(new ASMBinary(binary_op_type.slli, ans, lhs, new Immediate((val))));
+                // }
+                // else
                     now_block.asm_ins.add(new ASMBinary(binary_op_type.sll, ans, lhs, get_reg(now.rhs)));
             }
 
             case ashr ->
             {
-                if (now.rhs instanceof Constant)
-                {
-                    int val = ((Constant) now.rhs).val;
-                    now_block.asm_ins.add(new ASMBinary(binary_op_type.srai, ans, lhs, new Immediate((val))));
-                }
-                else
+                // if (now.rhs instanceof Constant)
+                // {
+                //     int val = ((Constant) now.rhs).val;
+                //     now_block.asm_ins.add(new ASMBinary(binary_op_type.srai, ans, lhs, new Immediate((val))));
+                // }
+                // else
                     now_block.asm_ins.add(new ASMBinary(binary_op_type.sra, ans, lhs, get_reg(now.rhs)));
             }
 
             case and ->
             {
-                if (now.rhs instanceof Constant)
-                {
-                    int val = ((Constant) now.rhs).val;
-                    now_block.asm_ins.add(new ASMBinary(binary_op_type.andi, ans, lhs, new Immediate((val))));
-                }
-                else
+                // if (now.rhs instanceof Constant)
+                // {
+                //     int val = ((Constant) now.rhs).val;
+                //     now_block.asm_ins.add(new ASMBinary(binary_op_type.andi, ans, lhs, new Immediate((val))));
+                // }
+                // else
                     now_block.asm_ins.add(new ASMBinary(binary_op_type.and, ans, lhs, get_reg(now.rhs)));
             }
 
             case or ->
             {
-                if (now.rhs instanceof Constant)
-                {
-                    int val = ((Constant) now.rhs).val;
-                    now_block.asm_ins.add(new ASMBinary(binary_op_type.ori, ans, lhs, new Immediate((val))));
-                }
-                else
+                // if (now.rhs instanceof Constant)
+                // {
+                //     int val = ((Constant) now.rhs).val;
+                //     now_block.asm_ins.add(new ASMBinary(binary_op_type.ori, ans, lhs, new Immediate((val))));
+                // }
+                // else
                     now_block.asm_ins.add(new ASMBinary(binary_op_type.or, ans, lhs, get_reg(now.rhs)));
             }
 
             case xor ->
             {
-                if (now.rhs instanceof Constant)
-                {
-                    int val = ((Constant) now.rhs).val;
-                    now_block.asm_ins.add(new ASMBinary(binary_op_type.xori, ans, lhs, new Immediate((val))));
-                }
-                else
+                // if (now.rhs instanceof Constant)
+                // {
+                //     int val = ((Constant) now.rhs).val;
+                //     now_block.asm_ins.add(new ASMBinary(binary_op_type.xori, ans, lhs, new Immediate((val))));
+                // }
+                // else
                     now_block.asm_ins.add(new ASMBinary(binary_op_type.xor, ans, lhs, get_reg(now.rhs)));
             }
         }
@@ -302,12 +304,12 @@ public class ASMBuilder
         {
             case eq ->
             {
-                if (now.rhs instanceof Constant)
-                {
-                    int val = ((Constant) now.rhs).val;
-                    now_block.asm_ins.add(new ASMBinary(binary_op_type.addi, tmp, lhs, new Immediate((-val))));
-                }
-                else
+                // if (now.rhs instanceof Constant)
+                // {
+                //     int val = ((Constant) now.rhs).val;
+                //     now_block.asm_ins.add(new ASMBinary(binary_op_type.addi, tmp, lhs, new Immediate((-val))));
+                // }
+                // else
                     now_block.asm_ins.add(new ASMBinary(binary_op_type.sub, tmp, lhs, get_reg(now.rhs)));
 
                 now_block.asm_ins.add(new ASMJudge(judge_op_type.seqz, ans, tmp));
@@ -315,12 +317,12 @@ public class ASMBuilder
 
             case ne ->
             {
-                if (now.rhs instanceof Constant)
-                {
-                    int val = ((Constant) now.rhs).val;
-                    now_block.asm_ins.add(new ASMBinary(binary_op_type.addi, tmp, lhs, new Immediate((-val))));
-                }
-                else
+                // if (now.rhs instanceof Constant)
+                // {
+                //     int val = ((Constant) now.rhs).val;
+                //     now_block.asm_ins.add(new ASMBinary(binary_op_type.addi, tmp, lhs, new Immediate((-val))));
+                // }
+                // else
                     now_block.asm_ins.add(new ASMBinary(binary_op_type.sub, tmp, lhs, get_reg(now.rhs)));
 
                     now_block.asm_ins.add(new ASMJudge(judge_op_type.snez, ans, tmp));
