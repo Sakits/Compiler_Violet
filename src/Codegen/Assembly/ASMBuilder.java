@@ -66,9 +66,9 @@ public class ASMBuilder
                 {
                     ans = new VirReg("const_int");
                     Immediate imm = new Immediate(val);
-                    // if (-2048 <= val && val < 2048)
-                        // now_block.asm_ins.add(new ASMBinary(binary_op_type.addi, ans, new PhyReg("zero"), imm));
-                    // else
+                    if (-2048 <= val && val < 2048)
+                        now_block.asm_ins.add(new ASMBinary(binary_op_type.addi, ans, new PhyReg("zero"), imm));
+                    else
                         now_block.asm_ins.add(new ASMLi(ans, imm));
                 }
                 else
@@ -201,11 +201,13 @@ public class ASMBuilder
 
             case sdiv ->
             {
+                assert !get_reg(now.rhs).equals(new PhyReg("zero"));
                 now_block.asm_ins.add(new ASMBinary(binary_op_type.div, ans, lhs, get_reg(now.rhs)));
             }
 
             case srem ->
             {
+                assert !get_reg(now.rhs).equals(new PhyReg("zero"));
                 now_block.asm_ins.add(new ASMBinary(binary_op_type.rem, ans, lhs, get_reg(now.rhs)));
             }
 
@@ -376,9 +378,9 @@ public class ASMBuilder
             if (now.offset instanceof Constant)
             {
                 int val = 4 * ((Constant)now.offset).val;
-                // if (-2048 <= val && val < 2048)
-                    // now_block.asm_ins.add(new ASMBinary(binary_op_type.addi, ans, ptr, new Immediate(val)));
-                // else
+                if (-2048 <= val && val < 2048)
+                    now_block.asm_ins.add(new ASMBinary(binary_op_type.addi, ans, ptr, new Immediate(val)));
+                else
                     now_block.asm_ins.add(new ASMBinary(binary_op_type.add, ans, ptr, get_reg(new Constant(new IRInt(), val))));
             }
             else
@@ -392,9 +394,9 @@ public class ASMBuilder
         {
             int offset = ((Constant)now.offset).val;
             int val = ((IRClass)((IRPointer)now.ptr.type).basic_type).get_offset(offset);
-            // if (-2048 <= val && val < 2048)
-                // now_block.asm_ins.add(new ASMBinary(binary_op_type.addi, ans, ptr, new Immediate(val)));
-            // else
+            if (-2048 <= val && val < 2048)
+                now_block.asm_ins.add(new ASMBinary(binary_op_type.addi, ans, ptr, new Immediate(val)));
+            else
                 now_block.asm_ins.add(new ASMBinary(binary_op_type.add, ans, ptr, get_reg(new Constant(new IRInt(), val))));
         }
     }
