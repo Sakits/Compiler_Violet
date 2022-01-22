@@ -79,9 +79,9 @@ public class RegAlloc
                 ArrayList<ASMInst> new_ins = new ArrayList<>();
                 if (block == func.blocks.get(0))
                 {
-                    if (offset < 2048)
-                        new_ins.add(new ASMBinary(binary_op_type.addi, new PhyReg("sp"), new PhyReg("sp"), new Immediate(-offset)));
-                    else
+                    // if (offset < 2048)
+                        // new_ins.add(new ASMBinary(binary_op_type.addi, new PhyReg("sp"), new PhyReg("sp"), new Immediate(-offset)));
+                    // else
                     {
                         new_ins.add(new ASMLi(new PhyReg("s0"), new Immediate(offset)));
                         new_ins.add(new ASMBinary(binary_op_type.sub, new PhyReg("sp"), new PhyReg("sp"), new PhyReg("s0")));
@@ -105,9 +105,9 @@ public class RegAlloc
                         phy_cnt++;
                         inst.change((VirReg)x, phy_reg);
 
-                        if (vir_reg.addr.offset.val < 2048)
-                            new_ins.add(new ASMLoad(load_op_type.lw, phy_reg, vir_reg.addr));
-                        else
+                        // if (vir_reg.addr.offset.val < 2048)
+                            // new_ins.add(new ASMLoad(load_op_type.lw, phy_reg, vir_reg.addr));
+                        // else
                         {
                             PhyReg addr = new PhyReg("s" + phy_cnt);
                             phy_cnt++;
@@ -119,9 +119,9 @@ public class RegAlloc
 
                     if (inst instanceof ASMRet)
                     {
-                        if (offset < 2048)
-                            new_ins.add(new ASMBinary(binary_op_type.addi, new PhyReg("sp"), new PhyReg("sp"), new Immediate(offset)));
-                        else
+                        // if (offset < 2048)
+                            // new_ins.add(new ASMBinary(binary_op_type.addi, new PhyReg("sp"), new PhyReg("sp"), new Immediate(offset)));
+                        // else
                         {
                             new_ins.add(new ASMLi(new PhyReg("s0"), new Immediate(offset)));
                             new_ins.add(new ASMBinary(binary_op_type.add, new PhyReg("sp"), new PhyReg("sp"), new PhyReg("s0")));
@@ -143,9 +143,9 @@ public class RegAlloc
                         phy_cnt++;
                         inst.change((VirReg)x, phy_reg);
 
-                        if (vir_reg.addr.offset.val < 2048)
-                            new_ins.add(new ASMStore(store_op_type.sw, phy_reg, vir_reg.addr));
-                        else
+                        // if (vir_reg.addr.offset.val < 2048)
+                            // new_ins.add(new ASMStore(store_op_type.sw, phy_reg, vir_reg.addr));
+                        // else
                         {
                             PhyReg addr = new PhyReg("s" + phy_cnt);
                             phy_cnt++;
