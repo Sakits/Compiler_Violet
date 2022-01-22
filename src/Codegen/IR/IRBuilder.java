@@ -481,7 +481,12 @@ public class IRBuilder extends ASTVisitor
                 case "/" :
                     op = binary_op_type.sdiv;
                     if (lval instanceof Constant && rval instanceof Constant)
-                        now.val = new Constant(type, ((Constant)lval).val / ((Constant)rval).val);
+                    {
+                        if (((Constant)rval).val != 0)
+                            now.val = new Constant(type, ((Constant)lval).val / ((Constant)rval).val);
+                        else
+                            now.val = new Constant(type, 0);
+                    }
                     else
                     {
                         now.val = new Register(type, false, "div_int", reg_cnt++);
@@ -492,7 +497,12 @@ public class IRBuilder extends ASTVisitor
                 case "%" :
                     op = binary_op_type.srem;
                     if (lval instanceof Constant && rval instanceof Constant)
-                        now.val = new Constant(type, ((Constant)lval).val % ((Constant)rval).val);
+                    {
+                        if (((Constant)rval).val != 0)
+                            now.val = new Constant(type, ((Constant)lval).val % ((Constant)rval).val);
+                        else
+                            now.val = new Constant(type, 0);
+                    }
                     else
                     {
                         now.val = new Register(type, false, "rem_int", reg_cnt++);
