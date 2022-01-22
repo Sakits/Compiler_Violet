@@ -165,8 +165,6 @@ public class ASMBuilder
         now_block = null;
     }
 
-    void 
-
     public void visit(IRBinaryExpr now) 
     {
         ASMReg lhs = get_reg(now.lhs);
