@@ -211,10 +211,12 @@ public class IRBuilder extends ASTVisitor
         now.cls_list.forEach(i -> {
             IRClass now_class = (IRClass) ((IRPointer) types.get(i.idt)).basic_type;
             i.var_list.forEach(j -> {
-                IRType type = types.get(j.type);
-                if (j.dim != 0)
-                    type = new IRPointer(j.dim, type);
-                now_class.vars.add(type);
+                j.var_list.forEach(k -> {
+                    IRType type = types.get(k.type);
+                    if (k.dim != 0)
+                        type = new IRPointer(k.dim, type);
+                    now_class.vars.add(type);
+                });
             });
         });
 

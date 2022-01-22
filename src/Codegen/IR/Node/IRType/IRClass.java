@@ -36,7 +36,6 @@ public class IRClass extends IRType
 
     public int get_offset(int pos)
     {
-        // System.out.println(vars.size());
         int ans = 0;
         for (int i = 0; i < pos; i++)
         {
