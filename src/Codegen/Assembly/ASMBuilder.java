@@ -330,7 +330,7 @@ public class ASMBuilder
                 if (now.rhs instanceof Constant)
                 {
                     int val = ((Constant) now.rhs).val;
-                    const_binary(binary_op_type.add, binary_op_type.addi, ans, lhs, -val);
+                    const_binary(binary_op_type.add, binary_op_type.addi, tmp, lhs, -val);
                 }
                 else
                     now_block.asm_ins.add(new ASMBinary(binary_op_type.sub, tmp, lhs, get_reg(now.rhs)));
@@ -343,7 +343,7 @@ public class ASMBuilder
                 if (now.rhs instanceof Constant)
                 {
                     int val = ((Constant) now.rhs).val;
-                    const_binary(binary_op_type.add, binary_op_type.addi, ans, lhs, -val);
+                    const_binary(binary_op_type.add, binary_op_type.addi, tmp, lhs, -val);
                 }
                 else
                     now_block.asm_ins.add(new ASMBinary(binary_op_type.sub, tmp, lhs, get_reg(now.rhs)));
