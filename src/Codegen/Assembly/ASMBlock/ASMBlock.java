@@ -8,6 +8,7 @@ public class ASMBlock
 {
     public String tag;
     public ArrayList<ASMInst> asm_ins = new ArrayList<>();
+    public ArrayList<ASMBlock> succ = new ArrayList<>();
 
     public ASMBlock(String tag)
     {

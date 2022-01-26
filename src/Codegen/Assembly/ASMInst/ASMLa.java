@@ -2,7 +2,6 @@ package Codegen.Assembly.ASMInst;
 
 import Codegen.Assembly.ASMValue.ASMHeapAddr;
 import Codegen.Assembly.ASMValue.ASMReg;
-import Codegen.Assembly.ASMValue.PhyReg;
 import Codegen.Assembly.ASMValue.VirReg;
 
 public class ASMLa extends ASMInst
@@ -16,13 +15,17 @@ public class ASMLa extends ASMInst
         this.rd = rd;
         this.rs = rs;
 
-        write_reg.add(rd);
+        def.add(rd);
     }
 
-    public void change(VirReg vir, PhyReg phy) 
+    public void change(VirReg vir, ASMReg phy)
     {
         if (rd == vir)
+        {
             rd = phy;
+            def.remove(vir);
+            def.add(phy);
+        }
     }
 
     public String toString()

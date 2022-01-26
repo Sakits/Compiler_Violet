@@ -2,7 +2,6 @@ package Codegen.Assembly.ASMInst;
 
 import Codegen.Assembly.ASMBlock.ASMBlock;
 import Codegen.Assembly.ASMValue.ASMReg;
-import Codegen.Assembly.ASMValue.PhyReg;
 import Codegen.Assembly.ASMValue.VirReg;
 
 public class ASMBranch extends ASMInst
@@ -25,16 +24,20 @@ public class ASMBranch extends ASMInst
         this.rs2 = rs2;
         this.dest_block = dest_block;
 
-        read_reg.add(rs1);
-        read_reg.add(rs2);
+        use.add(rs1);
+        if (rs2 != null)
+            use.add(rs2);
     }
 
-    public void change(VirReg vir, PhyReg phy) 
+    public void change(VirReg vir, ASMReg phy)
     {
         if (rs1 == vir)
             rs1 = phy;
         if (rs2 == vir)
             rs2 = phy;
+
+        use.remove(vir);
+        use.add(phy);
     }
 
     public String toString()

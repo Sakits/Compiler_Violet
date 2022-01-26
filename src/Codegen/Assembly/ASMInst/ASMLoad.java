@@ -2,7 +2,6 @@ package Codegen.Assembly.ASMInst;
 
 import Codegen.Assembly.ASMValue.ASMAddr;
 import Codegen.Assembly.ASMValue.ASMReg;
-import Codegen.Assembly.ASMValue.PhyReg;
 import Codegen.Assembly.ASMValue.VirReg;
 
 public class ASMLoad extends ASMInst
@@ -20,16 +19,24 @@ public class ASMLoad extends ASMInst
         this.rd = rd;
         this.addr = addr;
 
-        write_reg.add(rd);
-        read_reg.add(addr.base);
+        def.add(rd);
+        use.add(addr.base);
     }
 
-    public void change(VirReg vir, PhyReg phy) 
+    public void change(VirReg vir, ASMReg phy)
     {
         if (rd == vir)
+        {
             rd = phy;
+            def.remove(vir);
+            def.add(phy);
+        }
         if (addr.base == vir)
+        {
             addr.base = phy;
+            use.remove(vir);
+            use.add(phy);
+        }
     }
 
     public String toString()

@@ -7,7 +7,7 @@ public class ASMAddr
 
     public ASMAddr()
     {
-        this.base = new PhyReg("sp");
+        this.base = PhyReg.phy_regs.get("sp");
         this.offset = null;
     }
     

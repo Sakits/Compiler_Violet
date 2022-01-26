@@ -56,7 +56,7 @@ public class ASMBuilder
     {
         if (irval.val != null) return irval.val;
 
-        ASMReg ans = new PhyReg("zero");
+        ASMReg ans = PhyReg.phy_regs.get("zero");
         if (irval instanceof Constant)
         {
             int val = ((Constant)irval).val;
@@ -67,12 +67,12 @@ public class ASMBuilder
                     ans = new VirReg("const_int");
                     Immediate imm = new Immediate(val);
                     if (-2048 <= val && val < 2048)
-                        now_block.asm_ins.add(new ASMBinary(binary_op_type.addi, ans, new PhyReg("zero"), imm));
+                        now_block.asm_ins.add(new ASMBinary(binary_op_type.addi, ans, PhyReg.phy_regs.get("zero"), imm));
                     else
                         now_block.asm_ins.add(new ASMLi(ans, imm));
                 }
                 else
-                    ans = new PhyReg("zero");
+                    ans = PhyReg.phy_regs.get("zero");
             }
 
             if (irval.type instanceof IRBool)
@@ -80,10 +80,10 @@ public class ASMBuilder
                 if (val != 0)
                 {
                     ans = new VirReg("const_bool");
-                    now_block.asm_ins.add(new ASMBinary(binary_op_type.addi, ans, new PhyReg("zero"), new Immediate(1)));
+                    now_block.asm_ins.add(new ASMBinary(binary_op_type.addi, ans, PhyReg.phy_regs.get("zero"), new Immediate(1)));
                 }
                 else
-                    ans = new PhyReg("zero");
+                    ans = PhyReg.phy_regs.get("zero");
             }
         }
         else
@@ -143,10 +143,20 @@ public class ASMBuilder
 
         VirReg ra_store = new VirReg("ra_store");
         now_func.ra = ra_store;
-        now_block.asm_ins.add(new ASMMv(ra_store, new PhyReg("ra")));
+        now_block.asm_ins.add(new ASMMv(ra_store, PhyReg.phy_regs.get("ra")));
+
+        for (var i = 0; i < 32; i++)
+            if (PhyReg.type_list.get(i) == 1)
+            {
+                VirReg callee_store = new VirReg(PhyReg.name_list.get(i) + "_save");
+                now_func.callees.add(callee_store);
+                now_block.asm_ins.add(new ASMMv(callee_store, PhyReg.phy_regs.get(PhyReg.name_list.get(i))));
+            }
+            else
+                now_func.callees.add(null);
 
         for (int i = 0; i < Integer.min(8, now.para.size()); i++)
-            now_block.asm_ins.add(new ASMMv(get_reg(now.para.get(i)), new PhyReg("a" + i)));
+            now_block.asm_ins.add(new ASMMv(get_reg(now.para.get(i)), PhyReg.phy_regs.get("a" + i)));
         
         for (int i = 8; i < now.para.size(); i++)
         {
@@ -201,13 +211,13 @@ public class ASMBuilder
 
             case sdiv ->
             {
-                assert !get_reg(now.rhs).equals(new PhyReg("zero"));
+                assert !get_reg(now.rhs).equals(PhyReg.phy_regs.get("zero"));
                 now_block.asm_ins.add(new ASMBinary(binary_op_type.div, ans, lhs, get_reg(now.rhs)));
             }
 
             case srem ->
             {
-                assert !get_reg(now.rhs).equals(new PhyReg("zero"));
+                assert !get_reg(now.rhs).equals(PhyReg.phy_regs.get("zero"));
                 now_block.asm_ins.add(new ASMBinary(binary_op_type.rem, ans, lhs, get_reg(now.rhs)));
             }
 
@@ -272,12 +282,14 @@ public class ASMBuilder
     {
         now_block.asm_ins.add(new ASMBranch(branch_op_type.beqz, get_reg(now.cond), null, now.false_block.block));
         now_block.asm_ins.add(new ASMJump(now.true_block.block));
+        now_block.succ.add(now.false_block.block);
+        now_block.succ.add(now.true_block.block);
     }
 
     public void visit(IRCall now) 
     {
         for (int i = 0; i < Integer.min(8, now.para.size()); i++)
-            now_block.asm_ins.add(new ASMMv(new PhyReg("a" + i), get_reg(now.para.get(i))));
+            now_block.asm_ins.add(new ASMMv(PhyReg.phy_regs.get("a" + i), get_reg(now.para.get(i))));
 
         ArrayList<ASMAddr> call = new ArrayList<>();
         for (int i = 8; i < now.para.size(); i++)
@@ -291,7 +303,7 @@ public class ASMBuilder
         now_block.asm_ins.add(new ASMCall(now.func.func));
 
         if (now.dest != null)
-            now_block.asm_ins.add(new ASMMv(get_reg(now.dest), new PhyReg("a0")));
+            now_block.asm_ins.add(new ASMMv(get_reg(now.dest), PhyReg.phy_regs.get("a0")));
     }
 
     public void visit(IRCmp now) 
@@ -404,6 +416,7 @@ public class ASMBuilder
     public void visit(IRJump now) 
     {
         now_block.asm_ins.add(new ASMJump(now.dest_block.block));
+        now_block.succ.add(now.dest_block.block);
     }
 
     public void visit(IRLoad now) 
@@ -450,9 +463,13 @@ public class ASMBuilder
     public void visit(IRRet now) 
     {
         if (!now.val.type.toString().equals("void"))
-            now_block.asm_ins.add(new ASMMv(new PhyReg("a0"), get_reg(now.val)));
+            now_block.asm_ins.add(new ASMMv(PhyReg.phy_regs.get("a0"), get_reg(now.val)));
 
-        now_block.asm_ins.add(new ASMMv(new PhyReg("ra"), now_func.ra));
+        now_block.asm_ins.add(new ASMMv(PhyReg.phy_regs.get("ra"), now_func.ra));
+        for (var i = 0; i < 32; i++)
+        if (PhyReg.type_list.get(i) == 1)
+            now_block.asm_ins.add(new ASMMv(PhyReg.phy_regs.get(PhyReg.name_list.get(i)), now_func.callees.get(i)));
+
         now_block.asm_ins.add(new ASMRet());
     }
 

@@ -2,7 +2,6 @@ package Codegen.Assembly.ASMInst;
 
 import Codegen.Assembly.ASMValue.ASMAddr;
 import Codegen.Assembly.ASMValue.ASMReg;
-import Codegen.Assembly.ASMValue.PhyReg;
 import Codegen.Assembly.ASMValue.VirReg;
 
 public class ASMStore extends ASMInst
@@ -20,16 +19,19 @@ public class ASMStore extends ASMInst
         this.rs = rs;
         this.addr = addr;
 
-        read_reg.add(rs);
-        read_reg.add(addr.base);
+        use.add(rs);
+        use.add(addr.base);
     }
 
-    public void change(VirReg vir, PhyReg phy) 
+    public void change(VirReg vir, ASMReg phy)
     {
         if (rs == vir)
             rs = phy;
         if (addr.base == vir)
             addr.base = phy;
+
+        use.remove(vir);
+        use.add(phy);
     }
 
     public String toString()

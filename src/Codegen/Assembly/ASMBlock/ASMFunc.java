@@ -9,8 +9,8 @@ public class ASMFunc
 {
     public String name;
     public ArrayList<ASMBlock> blocks = new ArrayList<>();  
-
     public VirReg ra = null;
+    public ArrayList<VirReg> callees = new ArrayList<>();
 
     // StackFrame
     public ArrayList<ASMAddr> para = new ArrayList<>();
