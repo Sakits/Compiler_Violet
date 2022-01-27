@@ -1,6 +1,6 @@
 package Semantic.AST.Node;
 
-import Codegen.IR.Node.IRValue.IRValue;
+import Codegen.IR.IRValue.IRValue;
 import Utils.position;
 
 public abstract class ExprNode extends ASTNode

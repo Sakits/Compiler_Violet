@@ -1,9 +1,9 @@
-package Codegen.IR.Node.IRStat;
+package Codegen.IR.IRInst;
 
 import Codegen.Assembly.ASMBuilder;
-import Codegen.IR.Node.IRValue.IRValue;
+import Codegen.IR.IRValue.IRValue;
 
-public class IRBinaryExpr extends IRStat
+public class IRBinaryExpr extends IRInst
 {
     public IRValue dest;
     public enum binary_op_type {add, sub, mul, sdiv, srem, shl, ashr, and, or, xor};

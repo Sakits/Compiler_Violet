@@ -1,4 +1,4 @@
-package Codegen.IR.Node.IRType;
+package Codegen.IR.IRType;
 
 abstract public class IRType 
 {

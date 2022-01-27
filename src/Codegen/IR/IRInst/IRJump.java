@@ -1,9 +1,9 @@
-package Codegen.IR.Node.IRStat;
+package Codegen.IR.IRInst;
 
 import Codegen.Assembly.ASMBuilder;
-import Codegen.IR.Node.IRBlock.IRBlock;
+import Codegen.IR.IRBlock.IRBlock;
 
-public class IRJump extends IRStat
+public class IRJump extends IRInst
 {
     public IRBlock dest_block;
 

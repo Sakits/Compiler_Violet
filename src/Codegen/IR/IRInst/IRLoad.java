@@ -1,10 +1,10 @@
-package Codegen.IR.Node.IRStat;
+package Codegen.IR.IRInst;
 
 import Codegen.Assembly.ASMBuilder;
-import Codegen.IR.Node.IRType.IRType;
-import Codegen.IR.Node.IRValue.IRValue;
+import Codegen.IR.IRType.IRType;
+import Codegen.IR.IRValue.IRValue;
 
-public class IRLoad extends IRStat
+public class IRLoad extends IRInst
 {
     public IRType type;
     public IRValue dest, ptr;

@@ -28,18 +28,18 @@ import Codegen.Assembly.ASMValue.Immediate;
 import Codegen.Assembly.ASMValue.PhyReg;
 import Codegen.Assembly.ASMValue.VirReg;
 import Codegen.Assembly.ASMValue.ASMHeapAddr.var_type;
-import Codegen.IR.Node.IRBlock.IRBlock;
-import Codegen.IR.Node.IRBlock.IRFunc;
-import Codegen.IR.Node.IRBlock.IRGlobal;
-import Codegen.IR.Node.IRStat.*;
-import Codegen.IR.Node.IRType.IRBool;
-import Codegen.IR.Node.IRType.IRClass;
-import Codegen.IR.Node.IRType.IRInt;
-import Codegen.IR.Node.IRType.IRPointer;
-import Codegen.IR.Node.IRValue.ConstString;
-import Codegen.IR.Node.IRValue.Constant;
-import Codegen.IR.Node.IRValue.IRValue;
-import Codegen.IR.Node.IRValue.Register;
+import Codegen.IR.IRBlock.IRBlock;
+import Codegen.IR.IRBlock.IRFunc;
+import Codegen.IR.IRBlock.IRGlobal;
+import Codegen.IR.IRInst.*;
+import Codegen.IR.IRType.IRBool;
+import Codegen.IR.IRType.IRClass;
+import Codegen.IR.IRType.IRInt;
+import Codegen.IR.IRType.IRPointer;
+import Codegen.IR.IRValue.ConstString;
+import Codegen.IR.IRValue.Constant;
+import Codegen.IR.IRValue.IRValue;
+import Codegen.IR.IRValue.Register;
 
 public class ASMBuilder 
 {
@@ -484,5 +484,5 @@ public class ASMBuilder
         now_block.asm_ins.add(new ASMRet());
     }
 
-    public void visit(IRStat now) {}
+    public void visit(IRInst now) {}
 }

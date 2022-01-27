@@ -1,7 +1,7 @@
-package Codegen.IR.Node.IRValue;
+package Codegen.IR.IRValue;
 
 import Codegen.Assembly.ASMValue.ASMHeapAddr;
-import Codegen.IR.Node.IRType.IRType;
+import Codegen.IR.IRType.IRType;
 
 public class ConstString extends IRValue
 {

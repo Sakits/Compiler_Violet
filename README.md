@@ -1,9 +1,13 @@
 # Compiler_Violet
 
+> SJTU ACM Class Compiler Design and Implementation 2022 Assignment ( MS208 Course Project )
 
-# Violet_IR
+An Mx* Compiler which abandoned SSA-based optimizations in favor of self-designed magic optimizations. (Because I won't take that compiler optimization course next semester.)
 
-Violet IR is an IR simplified from LLVM IR without guaranteeing SSA in order to achieve some optimizations.
+
+## Violet_IR
+
+Violet IR is an IR simplified from LLVM IR without guaranteeing SSA in order to achieve some magical optimizations.
 
 ### Identifier
 ```
@@ -93,7 +97,7 @@ Type of `%comparison_result` must be `i1`.
 
 #### move
 
-`move %a %b`
+`move %a, %b`
 
 #### return
 `ret 0`

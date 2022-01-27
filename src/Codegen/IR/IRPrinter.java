@@ -5,9 +5,9 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
-import Codegen.IR.Node.IRBlock.IRBlock;
-import Codegen.IR.Node.IRBlock.IRFunc;
-import Codegen.IR.Node.IRBlock.IRGlobal;
+import Codegen.IR.IRBlock.IRBlock;
+import Codegen.IR.IRBlock.IRFunc;
+import Codegen.IR.IRBlock.IRGlobal;
 
 public class IRPrinter
 {

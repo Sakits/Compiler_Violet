@@ -1,7 +1,7 @@
-package Codegen.IR.Node.IRValue;
+package Codegen.IR.IRValue;
 
-import Codegen.IR.Node.IRType.IRPointer;
-import Codegen.IR.Node.IRType.IRType;
+import Codegen.IR.IRType.IRPointer;
+import Codegen.IR.IRType.IRType;
 
 public class Constant extends IRValue
 {

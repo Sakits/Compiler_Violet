@@ -1,6 +1,6 @@
 package Semantic.AST.Node;
 
-import Codegen.IR.Node.IRValue.Register;
+import Codegen.IR.IRValue.Register;
 import Semantic.AST.ASTVisitor;
 import Utils.position;
 

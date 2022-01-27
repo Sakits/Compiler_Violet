@@ -1,9 +1,9 @@
-package Codegen.IR.Node.IRStat;
+package Codegen.IR.IRInst;
 
 import Codegen.Assembly.ASMBuilder;
-import Codegen.IR.Node.IRValue.IRValue;
+import Codegen.IR.IRValue.IRValue;
 
-public class IRCmp extends IRStat
+public class IRCmp extends IRInst
 {
     public enum cmp_op_type {eq, ne, sgt, sge, slt, sle};
     public cmp_op_type op;

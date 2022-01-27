@@ -28,6 +28,7 @@ import Codegen.Assembly.ASMValue.VirReg;
 
 public class RegAlloc 
 {
+    static final int K = 28;
     HashMap<ASMBlock, HashSet<ASMReg> > live_in_mp, live_out_mp, def_mp;
     void liveness_analysis(ASMFunc func)
     {
@@ -185,7 +186,7 @@ public class RegAlloc
     {
         for (var reg : initial_nodes)
         {
-            if (degree.get(reg) >= 28)
+            if (degree.get(reg) >= K)
                 spill_nodes.add(reg);
             else if (move_related(reg))
                 freeze_nodes.add(reg);
@@ -240,7 +241,7 @@ public class RegAlloc
 
         // 度数从 K 变为 K - 1，从 spill_nodes 中弹出
         // 根据塞入是否传送有关 freeze 或者 simplify
-        if (deg == 28)
+        if (deg == K)
         {
             HashSet<ASMReg> regs = new HashSet<>(adjacent(reg));
             regs.add(reg);
@@ -304,7 +305,7 @@ public class RegAlloc
         else if (precolored_nodes.contains(v) || adj_set.contains(new Pair<>(u, v)) || u == PhyReg.phy_regs.get("zero") || v == PhyReg.phy_regs.get("zero"))
         {
             // u, v 冲突，不能合并，因此受抑制
-            constrained_mvs.contains(mv);
+            constrained_mvs.add(mv);
             add_worklist(u);
             add_worklist(v);
         }
@@ -314,7 +315,7 @@ public class RegAlloc
             boolean flag = true;
             for (var t : adjacent(v))
             {
-                // System.out.println("t: " + t + ", u: " + u + ", " + flag + ", " + (degree.get(t) < 28 || precolored_nodes.contains(t) || adj_set.contains(new Pair<>(t, u))));
+                // System.out.println("t: " + t + ", u: " + u + ", " + flag + ", " + (degree.get(t) < K || precolored_nodes.contains(t) || adj_set.contains(new Pair<>(t, u))));
                 flag &= OK(t, u);
             }
 
@@ -339,7 +340,7 @@ public class RegAlloc
     // 可以简化则加入简化 worklist
     void add_worklist(ASMReg reg)
     {
-        if (!precolored_nodes.contains(reg) && !move_related(reg) && degree.get(reg) < 28)
+        if (!precolored_nodes.contains(reg) && !move_related(reg) && degree.get(reg) < K)
         {
             freeze_nodes.remove(reg);
             assert reg != null;
@@ -351,7 +352,7 @@ public class RegAlloc
     // George 合并测试
     boolean OK(ASMReg t, ASMReg r)
     {
-        return degree.get(t) < 28 || precolored_nodes.contains(t) || adj_set.contains(new Pair<>(t, r));
+        return degree.get(t) < K || precolored_nodes.contains(t) || adj_set.contains(new Pair<>(t, r));
     }
 
     // 高度数邻节点数 < K
@@ -359,8 +360,8 @@ public class RegAlloc
     {
         int k = 0;
         for (var reg : regs)
-            k += degree.get(reg) >= 28 ? 1 : 0;
-        return k < 28;
+            k += degree.get(reg) >= K ? 1 : 0;
+        return k < K;
     }
 
     // 找到合并到的最终节点（可以用并查集优化，但没必要？
@@ -395,7 +396,7 @@ public class RegAlloc
             decrease_degree(t);
         }
 
-        if (degree.get(u) >= 28 && freeze_nodes.contains(u))
+        if (degree.get(u) >= K && freeze_nodes.contains(u))
         {
             freeze_nodes.remove(u);
             spill_nodes.add(u);
@@ -428,7 +429,7 @@ public class RegAlloc
             frozen_mvs.add(mv);
 
             // 若 v 不再传送相关且低度数，则加入 simplify
-            if (node_moves(v).isEmpty() && degree.get(v) < 28)
+            if (node_moves(v).isEmpty() && degree.get(v) < K)
             {
                 freeze_nodes.remove(v);
                 assert reg != null;

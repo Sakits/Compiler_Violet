@@ -1,10 +1,10 @@
-package Codegen.IR.Node.IRStat;
+package Codegen.IR.IRInst;
 
 import Codegen.Assembly.ASMBuilder;
-import Codegen.IR.Node.IRType.IRPointer;
-import Codegen.IR.Node.IRValue.IRValue;
+import Codegen.IR.IRType.IRPointer;
+import Codegen.IR.IRValue.IRValue;
 
-public class IRGet extends IRStat
+public class IRGet extends IRInst
 {
     public IRValue dest, ptr;
     public IRValue offset;

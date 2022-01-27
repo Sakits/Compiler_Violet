@@ -1,11 +1,11 @@
-package Codegen.IR.Node.IRBlock;
+package Codegen.IR.IRBlock;
 
 import java.util.ArrayList;
 
 import Codegen.Assembly.ASMBuilder;
-import Codegen.IR.Node.IRType.IRClass;
-import Codegen.IR.Node.IRValue.ConstString;
-import Codegen.IR.Node.IRValue.Register;
+import Codegen.IR.IRType.IRClass;
+import Codegen.IR.IRValue.ConstString;
+import Codegen.IR.IRValue.Register;
 
 public class IRGlobal 
 {

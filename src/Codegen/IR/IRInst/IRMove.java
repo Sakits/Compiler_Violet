@@ -1,9 +1,9 @@
-package Codegen.IR.Node.IRStat;
+package Codegen.IR.IRInst;
 
 import Codegen.Assembly.ASMBuilder;
-import Codegen.IR.Node.IRValue.IRValue;
+import Codegen.IR.IRValue.IRValue;
 
-public class IRMove extends IRStat
+public class IRMove extends IRInst
 {
     public IRValue dest, src;
 

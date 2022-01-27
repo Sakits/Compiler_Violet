@@ -1,4 +1,4 @@
-package Codegen.IR.Node.IRType;
+package Codegen.IR.IRType;
 
 public class IRStr extends IRType
 {

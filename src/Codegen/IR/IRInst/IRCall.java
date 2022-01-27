@@ -1,12 +1,12 @@
-package Codegen.IR.Node.IRStat;
+package Codegen.IR.IRInst;
 
 import java.util.ArrayList;
 
 import Codegen.Assembly.ASMBuilder;
-import Codegen.IR.Node.IRBlock.IRFunc;
-import Codegen.IR.Node.IRValue.IRValue;
+import Codegen.IR.IRBlock.IRFunc;
+import Codegen.IR.IRValue.IRValue;
 
-public class IRCall extends IRStat
+public class IRCall extends IRInst
 {
     public IRValue dest = null;
     public IRFunc func = null;

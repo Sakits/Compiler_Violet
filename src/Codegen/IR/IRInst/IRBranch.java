@@ -1,10 +1,10 @@
-package Codegen.IR.Node.IRStat;
+package Codegen.IR.IRInst;
 
 import Codegen.Assembly.ASMBuilder;
-import Codegen.IR.Node.IRBlock.IRBlock;
-import Codegen.IR.Node.IRValue.IRValue;
+import Codegen.IR.IRBlock.IRBlock;
+import Codegen.IR.IRValue.IRValue;
 
-public class IRBranch extends IRStat
+public class IRBranch extends IRInst
 {
     public IRValue cond;
     public IRBlock true_block, false_block;

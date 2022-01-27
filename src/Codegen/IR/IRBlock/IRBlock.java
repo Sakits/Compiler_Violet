@@ -1,14 +1,14 @@
-package Codegen.IR.Node.IRBlock;
+package Codegen.IR.IRBlock;
 
 import java.util.ArrayList;
 
 import Codegen.Assembly.ASMBuilder;
 import Codegen.Assembly.ASMBlock.ASMBlock;
-import Codegen.IR.Node.IRStat.IRStat;
+import Codegen.IR.IRInst.IRInst;
 
 public class IRBlock 
 {
-    public ArrayList<IRStat> irst = new ArrayList<>();
+    public ArrayList<IRInst> irst = new ArrayList<>();
     public String tag;
     public boolean is_returned = false;
 

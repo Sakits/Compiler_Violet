@@ -1,12 +1,12 @@
-package Codegen.IR.Node.IRBlock;
+package Codegen.IR.IRBlock;
 
 import java.util.ArrayList;
 
 import Codegen.Assembly.ASMBuilder;
 import Codegen.Assembly.ASMBlock.ASMFunc;
-import Codegen.IR.Node.IRType.IRType;
-import Codegen.IR.Node.IRValue.IRValue;
-import Codegen.IR.Node.IRValue.Register;
+import Codegen.IR.IRType.IRType;
+import Codegen.IR.IRValue.IRValue;
+import Codegen.IR.IRValue.Register;
 
 public class IRFunc 
 {

@@ -1,10 +1,10 @@
-package Codegen.IR.Node.IRStat;
+package Codegen.IR.IRInst;
 
 import Codegen.Assembly.ASMBuilder;
 
-abstract public class IRStat 
+abstract public class IRInst 
 {
-    public IRStat()
+    public IRInst()
     {
 
     }
