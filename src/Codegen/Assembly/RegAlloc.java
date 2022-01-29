@@ -551,16 +551,18 @@ public class RegAlloc
                 if (spilled_nodes.contains(x))
                 {
                     VirReg reg = (VirReg)x;
-                    VirReg temp = new VirReg(reg.name + "_spilled");
-                    inst.change(reg, temp);
+                    VirReg temp1 = new VirReg(reg.name + "_spilled_1");
+                    VirReg temp2 = new VirReg(reg.name + "_spilled_2");
+                    VirReg temp3 = new VirReg(reg.name + "_spilled_3");
+                    inst.change(reg, temp1);
 
                     if (reg.addr.offset.val < 2048)
-                        new_ins.add(new ASMLoad(load_op_type.lw, temp, reg.addr));
+                        new_ins.add(new ASMLoad(load_op_type.lw, temp1, reg.addr));
                     else
                     {
-                        new_ins.add(new ASMLi(temp, reg.addr.offset));
-                        new_ins.add(new ASMBinary(binary_op_type.add, temp, reg.addr.base, temp));
-                        new_ins.add(new ASMLoad(load_op_type.lw, temp, new ASMAddr(temp, new Immediate(0))));
+                        new_ins.add(new ASMLi(temp2, reg.addr.offset));
+                        new_ins.add(new ASMBinary(binary_op_type.add, temp3, reg.addr.base, temp2));
+                        new_ins.add(new ASMLoad(load_op_type.lw, temp1, new ASMAddr(temp3, new Immediate(0))));
                     }
                 }
                 
@@ -570,16 +572,18 @@ public class RegAlloc
                 if (spilled_nodes.contains(x))
                 {
                     VirReg reg = (VirReg)x;
-                    VirReg temp = new VirReg(reg.name + "_spilled");
-                    inst.change(reg, temp);
+                    VirReg temp1 = new VirReg(reg.name + "_spilled_1");
+                    VirReg temp2 = new VirReg(reg.name + "_spilled_2");
+                    VirReg temp3 = new VirReg(reg.name + "_spilled_3");
+                    inst.change(reg, temp1);
 
                     if (reg.addr.offset.val < 2048)
-                        new_ins.add(new ASMStore(store_op_type.sw, temp, reg.addr));
+                        new_ins.add(new ASMStore(store_op_type.sw, temp1, reg.addr));
                     else
                     {
-                        new_ins.add(new ASMLi(temp, reg.addr.offset));
-                        new_ins.add(new ASMBinary(binary_op_type.add, temp, reg.addr.base, temp));
-                        new_ins.add(new ASMStore(store_op_type.sw, temp, new ASMAddr(temp, new Immediate(0))));
+                        new_ins.add(new ASMLi(temp2, reg.addr.offset));
+                        new_ins.add(new ASMBinary(binary_op_type.add, temp3, reg.addr.base, temp2));
+                        new_ins.add(new ASMStore(store_op_type.sw, temp1, new ASMAddr(temp3, new Immediate(0))));
                     }
                 }
             }
