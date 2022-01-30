@@ -14,7 +14,7 @@ public class PhyReg extends ASMReg
 
     // caller: 0 ; callee: 1 ; others: 2
     public static ArrayList<Integer> type_list = new ArrayList<>(Arrays.asList(
-        2, 0, 2, 2, 2, 0, 0, 0, 1, 1,
+        2, 0, 2, 0, 0, 0, 0, 0, 1, 1,
         0, 0, 0, 0, 0, 0, 0, 0,
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0
     ));
