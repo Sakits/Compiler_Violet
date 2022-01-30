@@ -28,7 +28,7 @@ import Codegen.Assembly.ASMValue.VirReg;
 
 public class RegAlloc 
 {
-    static final int K = 30;
+    static final int K = 28;
     HashMap<ASMBlock, HashSet<ASMReg> > live_in_mp, live_out_mp, def_mp;
     void liveness_analysis(ASMFunc func)
     {
